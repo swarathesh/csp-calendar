@@ -1,0 +1,69 @@
+{
+  "verified_at": "2026-09-14",
+  "coverage_through": "2026-10-31",
+  "events": [
+    {
+      "date": "2026-09-16",
+      "title": "U.S. Import and Export Price Indexes",
+      "time": "08:30 ET",
+      "kind": "Macro",
+      "symbol": "",
+      "source": "https://www.bls.gov/schedule/2026/09_sched_list.htm",
+      "verified_at": "2026-09-14"
+    },
+    {
+      "date": "2026-09-29",
+      "title": "Job Openings and Labor Turnover Survey",
+      "time": "10:00 ET",
+      "kind": "Macro",
+      "symbol": "",
+      "source": "https://www.bls.gov/schedule/2026/09_sched_list.htm",
+      "verified_at": "2026-09-14"
+    },
+    {
+      "date": "2026-10-02",
+      "title": "Employment Situation",
+      "time": "08:30 ET",
+      "kind": "Macro",
+      "symbol": "",
+      "source": "https://www.bls.gov/schedule/2026/10_sched_list.htm",
+      "verified_at": "2026-09-14"
+    },
+    {
+      "date": "2026-10-14",
+      "title": "Consumer Price Index (CPI)",
+      "time": "08:30 ET",
+      "kind": "Macro",
+      "symbol": "",
+      "source": "https://www.bls.gov/schedule/2026/10_sched_list.htm",
+      "verified_at": "2026-09-14"
+    },
+    {
+      "date": "2026-10-15",
+      "title": "Producer Price Index (PPI)",
+      "time": "08:30 ET",
+      "kind": "Macro",
+      "symbol": "",
+      "source": "https://www.bls.gov/schedule/2026/10_sched_list.htm",
+      "verified_at": "2026-09-14"
+    },
+    {
+      "date": "2026-10-16",
+      "title": "U.S. Import and Export Price Indexes",
+      "time": "08:30 ET",
+      "kind": "Macro",
+      "symbol": "",
+      "source": "https://www.bls.gov/schedule/2026/10_sched_list.htm",
+      "verified_at": "2026-09-14"
+    },
+    {
+      "date": "2026-10-30",
+      "title": "Employment Cost Index",
+      "time": "08:30 ET",
+      "kind": "Macro",
+      "symbol": "",
+      "source": "https://www.bls.gov/schedule/2026/10_sched_list.htm",
+      "verified_at": "2026-09-14"
+    }
+  ]
+}

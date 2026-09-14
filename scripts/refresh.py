@@ -129,6 +129,14 @@ def collect(fn):
         rows=fn()
         return rows,{"name":fn.__name__,"status":"ok","fetched_at":NOW.isoformat(),"records":len(rows)}
     except Exception as exc:
+        if fn.__name__=="bls":
+            cache=json.loads((ROOT/"data/bls-verified.json").read_text())
+            rows=[e for e in cache["events"] if str(TODAY)<=e["date"]<=str(END)]
+            if rows:
+                return rows,{"name":"bls","status":"cached","fetched_at":None,
+                    "records":len(rows),"verified_at":cache["verified_at"],
+                    "message":"Live BLS unavailable. Selected scheduled dates last verified "+cache["verified_at"]+
+                    "; not automatically reverified. Check original source for revisions."}
         # Do not log request URLs; they can contain provider credentials.
         return [],{"name":fn.__name__,"status":"unavailable","fetched_at":NOW.isoformat(),"message":(str(exc) if isinstance(exc,ValueError) else type(exc).__name__+": source unavailable")}
 

@@ -59,3 +59,7 @@ Open http://localhost:8000. Serve over HTTP so the browser can fetch JSON.
 - https://finnhub.io/docs/api/earnings-calendar
 - https://ranaroussi.github.io/yfinance/reference/api/yfinance.Ticker.html
 - https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule
+
+## BLS access fallback
+
+The GitHub runner could not retrieve BLS during initial validation. When live BLS collection fails, data/bls-verified.json supplies selected dates verified against the official September/October 2026 schedules on 2026-09-14. These rows show their verification date and remain marked cached, with an incomplete-calendar status on CSP cards. They are not automatically reverified, are not comprehensive, and are removed from display once past. Review/update this file against original schedules if the live source remains unavailable. Earnings, BEA, FOMC and market/options data fetched successfully in the initial run.
