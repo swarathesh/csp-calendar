@@ -1,0 +1,70 @@
+name: Refresh data and deploy Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 1,7,13,19 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: csp-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Validate model and JavaScript
+        run: |
+          python -m unittest discover -s tests -v
+          python -m compileall -q scripts
+          node --check site/app.js
+      - name: Collect calendars and calculate targets
+        env:
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: python scripts/refresh.py
+      - name: Validate snapshot
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("site/data/latest.json").read_text())
+          assert len(d["watchlist"]) == 4
+          assert d["generated_at"] and len(d["sources"]) == 4
+          for card in d["watchlist"]:
+              for c in card["candidates"]:
+                  if c["strike"] is not None:
+                      assert c["strike"] <= c["model_ceiling"] + .01
+                      assert c["collateral"] == round(c["strike"]*100,2)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-preview
+          path: site
+          include-hidden-files: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

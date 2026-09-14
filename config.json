@@ -5,6 +5,32 @@
     "IWM",
     "SPY"
   ],
+  "earnings_proxies": {
+    "SOXL": [
+      "NVDA",
+      "AVGO",
+      "AMD",
+      "MU",
+      "MRVL",
+      "TSM"
+    ],
+    "SMH": [
+      "NVDA",
+      "AVGO",
+      "AMD",
+      "MU",
+      "TSM"
+    ],
+    "SPY": [
+      "NVDA",
+      "MSFT",
+      "AAPL",
+      "AMZN",
+      "GOOGL",
+      "META"
+    ],
+    "IWM": []
+  },
   "min_dte": 7,
   "max_dte": 28,
   "target_dte": 14,
