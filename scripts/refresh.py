@@ -27,7 +27,7 @@ def get(url, **kw):
 def event(day, title, kind, source, clock="Time not supplied", symbol=""):
     return dict(date=day.isoformat(),title=title,kind=kind,source=source,time=clock,symbol=symbol)
 
-def bls():
+def bls_ical():
     cal = Calendar.from_ical(get(BLS).content)
     out=[]
     for c in cal.walk("VEVENT"):
@@ -37,6 +37,31 @@ def bls():
         if any(w in title.lower() for w in ["consumer price","producer price","employment situation","job openings","employment cost","productivity","import","export"]):
             out.append(event(day,title,"Macro",BLS,dt.strftime("%H:%M ET") if isinstance(dt,datetime) else "Time not supplied"))
     if not out: raise ValueError("BLS calendar contained no recognized releases")
+    return out
+
+
+def bls():
+    try:
+        rows=bls_ical()
+        if any(str(TODAY)<=e["date"]<=str(END) for e in rows):
+            return rows
+    except Exception:
+        pass
+    url="https://www.bls.gov/schedule/news_release/current_year.asp"
+    soup=BeautifulSoup(get(url).text,"html.parser")
+    out=[]
+    for row in soup.select("tr"):
+        cells=row.find_all(["td","th"])
+        if len(cells)<3: continue
+        raw=cells[0].get_text(" ",strip=True)
+        match=re.search(r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(20\d{2})",raw)
+        if not match: continue
+        day=datetime.strptime(f"{match[1]} {match[2]} {match[3]}","%B %d %Y").date()
+        title=cells[-1].get_text(" ",strip=True)
+        if any(w in title.lower() for w in ["consumer price","producer price","employment situation","job openings","employment cost","productivity","import","export"]):
+            out.append(event(day,title,"Macro",url,cells[1].get_text(" ",strip=True)+" ET"))
+    if not any(str(TODAY)<=e["date"]<=str(END) for e in out):
+        raise ValueError("No upcoming BLS releases found in official calendar or schedule")
     return out
 
 def bea():
@@ -105,7 +130,7 @@ def collect(fn):
         return rows,{"name":fn.__name__,"status":"ok","fetched_at":NOW.isoformat(),"records":len(rows)}
     except Exception as exc:
         # Do not log request URLs; they can contain provider credentials.
-        return [],{"name":fn.__name__,"status":"unavailable","fetched_at":NOW.isoformat(),"message":type(exc).__name__+": source unavailable or schema changed"}
+        return [],{"name":fn.__name__,"status":"unavailable","fetched_at":NOW.isoformat(),"message":(str(exc) if isinstance(exc,ValueError) else type(exc).__name__+": source unavailable")}
 
 def analyse(symbol, events, sources, config):
     item={"symbol":symbol,"status":"DATA UNAVAILABLE","source":"https://finance.yahoo.com/quote/"+symbol+"/options/","candidates":[]}
@@ -166,7 +191,7 @@ def main():
         source["upcoming_records"]=sum(1 for e in events if (source["name"]=="earnings")== (e["kind"]=="Earnings")) if source["name"]=="earnings" else len([e for rows,s in results if s["name"]==source["name"] for e in rows if str(TODAY)<=e["date"]<=str(END)])
         if source["name"]!="earnings" and source["upcoming_records"]==0:
             source["status"]="unavailable"
-            source["message"]="No upcoming events found; coverage requires review."
+            source.setdefault("message","No upcoming events found; coverage requires review.")
     cards=[analyse(s,events,sources,config) for s in config["watchlist"]]
     output={"generated_at":NOW.isoformat(),"through":str(END),"events":events,"sources":sources,"watchlist":cards}
     dest=ROOT/"site/data"; dest.mkdir(parents=True,exist_ok=True)

@@ -37,7 +37,7 @@ jobs:
           import json
           from pathlib import Path
           d=json.loads(Path("site/data/latest.json").read_text())
-          assert len(d["watchlist"]) == 4
+          assert len(d["watchlist"]) == len(json.loads(Path("config.json").read_text())["watchlist"])
           assert d["generated_at"] and len(d["sources"]) == 4
           for card in d["watchlist"]:
               for c in card["candidates"]:
