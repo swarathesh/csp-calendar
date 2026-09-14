@@ -1,0 +1,13 @@
+{
+  "watchlist": [
+    "SOXL",
+    "SMH",
+    "IWM",
+    "SPY"
+  ],
+  "min_dte": 7,
+  "max_dte": 28,
+  "target_dte": 14,
+  "history_years": 5,
+  "tail_quantile": 0.05
+}
