@@ -30,7 +30,7 @@ Each run tests the calculation code, collects fresh data, builds site/data/lates
 Defaults: SOXL, SMH, IWM, SPY; 7–28 days from the reassessment date; approximately 14-day expirations. Edit config.json to adjust the watchlist, earnings proxies, history or horizon.
 
 1. Check macro catalysts and selected company earnings proxies. A relevant event within three calendar days leads to a reassessment on the next NYSE session after the event cluster. This is a review date, not an instruction to enter automatically.
-2. Take five years of adjusted daily closes, excluding today's unfinished bar. Use the last completed close as the reference price, with its date displayed.
+2. Take five years of adjusted daily closes, excluding unfinished session bars. Use the last completed close as the reference price, with its date displayed.
 3. Count trading sessions from that reference close through each selected listed expiration.
 4. For each historical window of that length, calculate the lowest subsequent close relative to the starting close. Use the fifth percentile as a model strike ceiling; also display the worst observed closing decline and overlapping sample count.
 5. Screen actual regular-size puts below the ceiling and at least 1% below the reference close, with positive bids, open interest ≥25 and a bid/ask spread ≤50% of midpoint. Select the highest qualifying strike. Missing/illiquid chains yield no candidate.

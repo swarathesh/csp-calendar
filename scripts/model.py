@@ -7,6 +7,13 @@ import pandas_market_calendars as mcal
 def sessions(start, end):
     return [x.date() for x in mcal.get_calendar("NYSE").valid_days(start_date=start, end_date=end)]
 
+def last_completed_session(now):
+    schedule=mcal.get_calendar("NYSE").schedule(
+        start_date=now.date()-timedelta(days=12), end_date=now.date())
+    closed=schedule[schedule["market_close"] <= now]
+    if closed.empty: raise ValueError("No completed trading session")
+    return closed.index[-1].date()
+
 def next_session(day):
     return sessions(day + timedelta(days=1), day + timedelta(days=12))[0]
 

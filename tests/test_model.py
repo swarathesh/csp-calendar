@@ -1,10 +1,15 @@
 import sys, unittest
 from pathlib import Path
-from datetime import date
+from datetime import date, datetime, timezone
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"scripts"))
-from model import downside, timing, choose_put, relevant
+from model import downside, timing, choose_put, relevant, last_completed_session
 
 class ModelTests(unittest.TestCase):
+    def test_completed_close_respects_early_close(self):
+        before=datetime(2026,11,27,17,30,tzinfo=timezone.utc)
+        after=datetime(2026,11,27,18,30,tzinfo=timezone.utc)
+        self.assertEqual(last_completed_session(before),date(2026,11,25))
+        self.assertEqual(last_completed_session(after),date(2026,11,27))
     def test_next_session_skips_holiday(self):
         entry,status,_=timing([{"date":"2026-07-02","title":"Jobs"}],date(2026,7,2))
         self.assertEqual(entry,date(2026,7,6))

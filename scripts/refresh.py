@@ -8,7 +8,7 @@ import requests
 import yfinance as yf
 from bs4 import BeautifulSoup
 from icalendar import Calendar
-from model import downside, relevant, timing, sessions, choose_put
+from model import downside, relevant, timing, sessions, choose_put, last_completed_session
 
 ROOT = Path(__file__).resolve().parents[1]
 NOW = datetime.now(timezone.utc)
@@ -138,14 +138,17 @@ def analyse(symbol, events, sources, config):
         ticker=yf.Ticker(symbol)
         hist=ticker.history(period=str(config["history_years"])+"y",auto_adjust=True)
         # Use completed sessions only; a partial daily bar must not distort historical tails.
-        complete=hist[[d<TODAY for d in hist.index.date]]["Close"].dropna()
+        expected=last_completed_session(NOW)
+        complete=hist[[d<=expected for d in hist.index.date]]["Close"].dropna()
         if len(complete)<252: raise ValueError("Not enough price history")
         spot=float(complete.iloc[-1])
         asof=complete.index[-1].date()
-        expected=sessions(TODAY-timedelta(days=12),TODAY-timedelta(days=1))[-1]
         if asof<expected: raise ValueError("Price history is stale")
         ev=relevant(events,symbol,config["earnings_proxies"])
         entry,status,near=timing(ev,TODAY)
+        if entry==TODAY and expected==TODAY:
+            from model import next_session
+            entry=next_session(TODAY)
         missing=[s["name"] for s in sources if s["status"]!="ok"]
         item.update(price=round(spot,2),price_date=str(asof),reassess_date=str(entry),
                     status="INCOMPLETE CALENDAR" if missing else status,
