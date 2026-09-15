@@ -27,6 +27,7 @@ jobs:
           python -m unittest discover -s tests -v
           python -m compileall -q scripts
           node --check site/app.js
+          node --test tests/test_calendar.cjs
       - name: Collect calendars and calculate targets
         env:
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
