@@ -8,6 +8,7 @@ import requests
 import yfinance as yf
 from bs4 import BeautifulSoup
 from icalendar import Calendar
+from extras import chain_rows, fed_projections, analyst_targets
 from model import downside, relevant, timing, sessions, choose_put, last_completed_session
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -141,7 +142,7 @@ def collect(fn):
         return [],{"name":fn.__name__,"status":"unavailable","fetched_at":NOW.isoformat(),"message":(str(exc) if isinstance(exc,ValueError) else type(exc).__name__+": source unavailable")}
 
 def analyse(symbol, events, sources, config):
-    item={"symbol":symbol,"status":"DATA UNAVAILABLE","source":"https://finance.yahoo.com/quote/"+symbol+"/options/","candidates":[]}
+    item={"symbol":symbol,"status":"DATA UNAVAILABLE","source":"https://finance.yahoo.com/quote/"+symbol+"/options/","candidates":[],"option_chains":[]}
     try:
         ticker=yf.Ticker(symbol)
         hist=ticker.history(period=str(config["history_years"])+"y",auto_adjust=True)
@@ -169,7 +170,10 @@ def analyse(symbol, events, sources, config):
             horizon=len(sessions(asof+timedelta(days=1),expiry))
             risk=downside(complete.to_numpy(),horizon,config["tail_quantile"])
             ceiling=spot*(1+risk["tail"])
-            chain=ticker.option_chain(str(expiry)).puts
+            bundle=ticker.option_chain(str(expiry))
+            chain=bundle.puts
+            item["option_chains"].append({"expiry":str(expiry),"fetched_at":NOW.isoformat(),
+                "calls":chain_rows(bundle.calls),"puts":chain_rows(bundle.puts)})
             put=choose_put(chain.to_dict("records"),spot,ceiling)
             row={"expiry":str(expiry),"dte":(expiry-TODAY).days,"model_ceiling":round(ceiling,2),
                  "tail_pct":round(risk["tail"]*100,2),"worst_pct":round(risk["worst"]*100,2),
@@ -204,7 +208,8 @@ def main():
             source["status"]="unavailable"
             source.setdefault("message","No upcoming events found; coverage requires review.")
     cards=[analyse(s,events,sources,config) for s in config["watchlist"]]
-    output={"generated_at":NOW.isoformat(),"through":str(END),"events":events,"sources":sources,"watchlist":cards}
+    output={"generated_at":NOW.isoformat(),"through":str(END),"events":events,"sources":sources,"watchlist":cards,
+            "fed_projections":fed_projections(get,NOW),"analyst_targets":analyst_targets(config,NOW)}
     dest=ROOT/"site/data"; dest.mkdir(parents=True,exist_ok=True)
     (dest/"latest.json").write_text(json.dumps(output,indent=2,allow_nan=False)+"\n")
     print(json.dumps({"generated_at":output["generated_at"],"events":len(events),"sources":sources,

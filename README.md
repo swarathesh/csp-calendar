@@ -63,3 +63,11 @@ Open http://localhost:8000. Serve over HTTP so the browser can fetch JSON.
 ## BLS access fallback
 
 The GitHub runner could not retrieve BLS during initial validation. When live BLS collection fails, data/bls-verified.json supplies selected dates verified against the official September/October 2026 schedules on 2026-09-14. These rows show their verification date and remain marked cached, with an incomplete-calendar status on CSP cards. They are not automatically reverified, are not comprehensive, and are removed from display once past. Review/update this file against original schedules if the live source remains unavailable. Earnings, BEA, FOMC and market/options data fetched successfully in the initial run.
+
+
+## Chains & forecasts
+The fourth dashboard tab exposes full call/put chains for the three expirations screened per instrument: bid, ask, last, implied volatility, volume, open interest, contract size and last trade time. Quotes are snapshots refreshed on the existing schedule, not real-time or streaming. No quote timestamp is inferred from last-trade time.
+
+The Fed forecast section discovers the latest accessible Summary of Economic Projections linked from the official FOMC calendar and displays the first four (median) federal funds rate projections and publication date. These are annual/longer-run participant projections, not next-meeting probabilities. CME FedWatch is linked for market-implied meeting probabilities; automated CME data ingestion is not implemented.
+
+Analyst targets are retrieved through yfinance for watchlist instruments and selected earnings proxies. Instruments without target coverage are marked unavailable. Constituent targets are not ETF forecasts. These long-horizon forecasts do not alter CSP strike calculations; target-specific publication dates and horizons are not supplied by the endpoint. All additions work without new API keys and fail independently of the calendar/historical screen.

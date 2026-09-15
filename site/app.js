@@ -6,7 +6,7 @@ const day=s=>new Date(s+"T12:00:00Z").toLocaleDateString("en-US",{month:"short",
 const url=s=>/^https:\/\//.test(s)?esc(s):"#";
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{
  document.querySelectorAll("[data-tab]").forEach(x=>{x.classList.toggle("active",x===b);x.setAttribute("aria-pressed",x===b)});
- ["calendar","research","method"].forEach(x=>$(x).hidden=x!==b.dataset.tab);
+ ["calendar","research","method","intelligence"].forEach(x=>$(x).hidden=x!==b.dataset.tab);
 }));
 function renderEvents(){
  if(!snapshot)return;
@@ -86,6 +86,42 @@ function card(c){
  c.candidates.map((r,i)=>'<div class="candidate"><strong>'+day(r.expiry)+'</strong> <small>· '+r.dte+' DTE today</small><div class="metrics">'+metric("Candidate strike",money(r.strike))+metric("Model ceiling",money(r.model_ceiling))+metric("Collateral",money(r.collateral))+'</div><div class="metrics">'+metric("Indicative credit",money(r.premium))+metric("Breakeven",money(r.breakeven))+metric("Return on collateral",r.return_pct==null?"—":r.return_pct+"%")+'</div><p>Historical tail '+r.tail_pct+'% · worst '+r.worst_pct+'% · '+r.samples+' overlapping windows.</p><p>'+esc(r.quote_note)+'</p>'+(r.last_trade?'<small>Option last traded: '+esc(r.last_trade)+' (not bid time)</small>':'')+expirationEvents(r)+'</div>').join("")+
  '<p><a target="_blank" rel="noopener noreferrer" href="'+url(c.source)+'">View options source ↗</a></p></article>';
 }
+
+function numeric(v,digits=2){return v==null?"—":Number(v).toLocaleString("en-US",{maximumFractionDigits:digits});}
+function dataTable(heads,rows){
+ return '<div class="table-wrap"><table><thead><tr>'+heads.map(h=>'<th scope="col">'+esc(h)+'</th>').join("")+'</tr></thead><tbody>'+rows.join("")+'</tbody></table></div>';
+}
+function fillExpiries(){
+ const c=snapshot.watchlist.find(c=>c.symbol===$("chain-symbol").value);
+ $("chain-expiry").innerHTML=(c?.option_chains||[]).map(x=>'<option value="'+esc(x.expiry)+'">'+day(x.expiry)+'</option>').join("");
+ renderChain();
+}
+function renderChain(){
+ const c=snapshot.watchlist.find(c=>c.symbol===$("chain-symbol").value);
+ const chain=(c?.option_chains||[]).find(x=>x.expiry===$("chain-expiry").value);
+ if(!chain){$("chain-note").textContent="Option chain unavailable for this instrument."; $("chain-table").innerHTML="";return;}
+ const side=$("chain-side").value;
+ const candidate=c.candidates.find(x=>x.expiry===chain.expiry);
+ $("chain-note").textContent="Collected "+new Date(chain.fetched_at).toLocaleString("en-US",{timeZone:"America/New_York"})+" ET. Delayed/indicative quotes; bid and ask timestamps unavailable. Last trade is not quote time.";
+ $("chain-table").innerHTML=dataTable(["Strike","Bid","Ask","Last","IV","Volume","Open interest","Size","Last trade"],chain[side].map(r=>'<tr'+(side==="puts"&&candidate?.strike!=null&&r.strike===candidate.strike?' class="selected-strike"':'')+'>'+
+ [money(r.strike),money(r.bid),money(r.ask),money(r.lastPrice),r.impliedVolatility==null?"—":numeric(r.impliedVolatility*100)+"%",numeric(r.volume,0),numeric(r.openInterest,0),r.size,r.last_trade].map(v=>'<td>'+esc(v)+'</td>').join("")+'</tr>'));
+}
+function renderIntelligence(){
+ $("chain-symbol").innerHTML=snapshot.watchlist.map(c=>'<option>'+esc(c.symbol)+'</option>').join("");
+ fillExpiries();
+ const fed=snapshot.fed_projections;
+ $("fed-projections").innerHTML=fed?.status==="ok"
+  ? '<p>Published '+day(fed.published_at)+' · <a href="'+url(fed.source)+'" target="_blank" rel="noopener noreferrer">Federal Reserve source ↗</a></p>'+
+  dataTable(["Projection period","Median federal funds rate"],fed.rows.map(r=>'<tr><td>'+esc(r.period)+'</td><td>'+numeric(r.median_rate)+'%</td></tr>'))
+  : '<p>Projection data unavailable. <a href="https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm">Check the latest Fed projections ↗</a></p>';
+ const analysts=snapshot.analyst_targets||[];
+ $("analyst-table").innerHTML=analysts.length?dataTable(["Symbol / scope","Provider reference price","Low target","Mean target","Median target","High target"],analysts.map(r=>'<tr><td><a href="'+url(r.source)+'" target="_blank" rel="noopener noreferrer">'+esc(r.symbol)+'</a><small>'+esc(r.scope)+'</small>'+(r.status!=="ok"?'<small>No analyst target available</small>':'')+'</td>'+
+ [r.current,r.low,r.mean,r.median,r.high].map(v=>'<td>'+money(v)+'</td>').join("")+'</tr>')):'<p>Analyst data unavailable.</p>';
+}
+$("chain-symbol").addEventListener("change",fillExpiries);
+$("chain-expiry").addEventListener("change",renderChain);
+$("chain-side").addEventListener("change",renderChain);
+
 async function load(){
  try{
   const res=await fetch("data/latest.json",{cache:"no-store"});if(!res.ok)throw Error("No published snapshot yet");
@@ -103,6 +139,7 @@ async function load(){
   $("cards").innerHTML=snapshot.watchlist.map(card).join("");
   $("sources").innerHTML=snapshot.sources.map(s=>'<div class="source-row"><strong>'+esc(s.name.toUpperCase())+'</strong><span>'+esc(s.status)+' · '+(s.upcoming_records??s.records??0)+' upcoming records'+(s.message?' · '+esc(s.message):'')+'</span></div>').join("");
   renderEvents();
+  renderIntelligence();
  }catch(err){$("banner").textContent="No data snapshot available yet. Check the refresh workflow in GitHub Actions. Targets will appear only after data is collected."; $("updated").textContent="Awaiting first successful refresh";$("empty").hidden=false;}
 }
 load();
