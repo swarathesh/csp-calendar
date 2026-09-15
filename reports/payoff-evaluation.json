@@ -1,0 +1,519 @@
+{
+  "collected_at": "2026-09-15T21:16:43.834501+00:00",
+  "note": "Current delayed quotes applied to historical terminal-return scenarios; not historical option P/L. No reliable bid timestamp supplied.",
+  "history_years": 10,
+  "symbols": {
+    "SOXL": {
+      "price_date": "2026-09-15",
+      "source": "https://finance.yahoo.com/quote/SOXL/options/",
+      "calendar_status": "INCOMPLETE CALENDAR",
+      "candidates": [
+        {
+          "expiry": "2026-09-25",
+          "last_trade_not_quote_time": "2026-09-15 20:00:44+00:00",
+          "analysis": {
+            "status": "UNCERTAIN HISTORICAL SCENARIOS",
+            "horizon_sessions": 8,
+            "windows": 313,
+            "reference_price": 102.31999969482422,
+            "strike": 70.0,
+            "bid": 0.35,
+            "fee_per_contract": 2.0,
+            "slippage_per_share": 0.01,
+            "net_credit": 32.0,
+            "mean_net_pnl": 10.81,
+            "mean_interval": [
+              -17.91,
+              29.93
+            ],
+            "median_net_pnl": 32.0,
+            "loss_rate_pct": 1.6,
+            "worst_net_pnl": -3619.33,
+            "worst_5pct_mean": -382.62,
+            "mean_loss_breakeven_bid": 0.2419,
+            "stress": [
+              {
+                "underlying_return_pct": -10.0,
+                "net_pnl": 32.0
+              },
+              {
+                "underlying_return_pct": -20.0,
+                "net_pnl": 32.0
+              },
+              {
+                "underlying_return_pct": -40.0,
+                "net_pnl": -828.8
+              },
+              {
+                "underlying_return_pct": -60.0,
+                "net_pnl": -2875.2
+              },
+              {
+                "underlying_return_pct": -100.0,
+                "net_pnl": -6968.0
+              }
+            ]
+          }
+        },
+        {
+          "expiry": "2026-10-02",
+          "last_trade_not_quote_time": "2026-09-15 19:54:06+00:00",
+          "analysis": {
+            "status": "POSITIVE HISTORICAL SCENARIOS",
+            "horizon_sessions": 13,
+            "windows": 193,
+            "reference_price": 102.31999969482422,
+            "strike": 60.0,
+            "bid": 0.41,
+            "fee_per_contract": 2.0,
+            "slippage_per_share": 0.01,
+            "net_credit": 38.0,
+            "mean_net_pnl": 29.23,
+            "mean_interval": [
+              12.61,
+              38.0
+            ],
+            "median_net_pnl": 38.0,
+            "loss_rate_pct": 1.6,
+            "worst_net_pnl": -1417.81,
+            "worst_5pct_mean": -131.35,
+            "mean_loss_breakeven_bid": 0.1177,
+            "stress": [
+              {
+                "underlying_return_pct": -10.0,
+                "net_pnl": 38.0
+              },
+              {
+                "underlying_return_pct": -20.0,
+                "net_pnl": 38.0
+              },
+              {
+                "underlying_return_pct": -40.0,
+                "net_pnl": 38.0
+              },
+              {
+                "underlying_return_pct": -60.0,
+                "net_pnl": -1869.2
+              },
+              {
+                "underlying_return_pct": -100.0,
+                "net_pnl": -5962.0
+              }
+            ]
+          }
+        },
+        {
+          "expiry": "2026-10-09",
+          "last_trade_not_quote_time": null,
+          "analysis": {
+            "status": "NO QUALIFYING PUT"
+          }
+        }
+      ]
+    },
+    "SMH": {
+      "price_date": "2026-09-15",
+      "source": "https://finance.yahoo.com/quote/SMH/options/",
+      "calendar_status": "INCOMPLETE CALENDAR",
+      "candidates": [
+        {
+          "expiry": "2026-09-24",
+          "last_trade_not_quote_time": null,
+          "analysis": {
+            "status": "NO QUALIFYING PUT"
+          }
+        },
+        {
+          "expiry": "2026-09-25",
+          "last_trade_not_quote_time": "2026-09-15 19:36:16+00:00",
+          "analysis": {
+            "status": "UNCERTAIN HISTORICAL SCENARIOS",
+            "horizon_sessions": 8,
+            "windows": 313,
+            "reference_price": 542.1099853515625,
+            "strike": 485.0,
+            "bid": 0.59,
+            "fee_per_contract": 2.0,
+            "slippage_per_share": 0.01,
+            "net_credit": 56.0,
+            "mean_net_pnl": 15.02,
+            "mean_interval": [
+              -40.1,
+              51.8
+            ],
+            "median_net_pnl": 56.0,
+            "loss_rate_pct": 1.9,
+            "worst_net_pnl": -6897.85,
+            "worst_5pct_mean": -745.58,
+            "mean_loss_breakeven_bid": 0.4398,
+            "stress": [
+              {
+                "underlying_return_pct": -10.0,
+                "net_pnl": 56.0
+              },
+              {
+                "underlying_return_pct": -20.0,
+                "net_pnl": -5075.2
+              },
+              {
+                "underlying_return_pct": -40.0,
+                "net_pnl": -15917.4
+              },
+              {
+                "underlying_return_pct": -60.0,
+                "net_pnl": -26759.6
+              },
+              {
+                "underlying_return_pct": -100.0,
+                "net_pnl": -48444.0
+              }
+            ]
+          }
+        },
+        {
+          "expiry": "2026-10-02",
+          "last_trade_not_quote_time": "2026-09-15 14:58:58+00:00",
+          "analysis": {
+            "status": "POSITIVE HISTORICAL SCENARIOS",
+            "horizon_sessions": 13,
+            "windows": 193,
+            "reference_price": 542.1099853515625,
+            "strike": 465.0,
+            "bid": 0.84,
+            "fee_per_contract": 2.0,
+            "slippage_per_share": 0.01,
+            "net_credit": 81.0,
+            "mean_net_pnl": 81.0,
+            "mean_interval": [
+              81.0,
+              81.0
+            ],
+            "median_net_pnl": 81.0,
+            "loss_rate_pct": 0.0,
+            "worst_net_pnl": 81.0,
+            "worst_5pct_mean": 81.0,
+            "mean_loss_breakeven_bid": 0.03,
+            "stress": [
+              {
+                "underlying_return_pct": -10.0,
+                "net_pnl": 81.0
+              },
+              {
+                "underlying_return_pct": -20.0,
+                "net_pnl": -3050.2
+              },
+              {
+                "underlying_return_pct": -40.0,
+                "net_pnl": -13892.4
+              },
+              {
+                "underlying_return_pct": -60.0,
+                "net_pnl": -24734.6
+              },
+              {
+                "underlying_return_pct": -100.0,
+                "net_pnl": -46419.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "IWM": {
+      "price_date": "2026-09-15",
+      "source": "https://finance.yahoo.com/quote/IWM/options/",
+      "calendar_status": "INCOMPLETE CALENDAR",
+      "candidates": [
+        {
+          "expiry": "2026-09-25",
+          "last_trade_not_quote_time": "2026-09-14 15:44:45+00:00",
+          "analysis": {
+            "status": "UNCERTAIN HISTORICAL SCENARIOS",
+            "horizon_sessions": 8,
+            "windows": 313,
+            "reference_price": 285.1400146484375,
+            "strike": 264.0,
+            "bid": 0.37,
+            "fee_per_contract": 2.0,
+            "slippage_per_share": 0.01,
+            "net_credit": 34.0,
+            "mean_net_pnl": 3.29,
+            "mean_interval": [
+              -46.87,
+              32.35
+            ],
+            "median_net_pnl": 34.0,
+            "loss_rate_pct": 1.6,
+            "worst_net_pnl": -6625.39,
+            "worst_5pct_mean": -566.72,
+            "mean_loss_breakeven_bid": 0.3371,
+            "stress": [
+              {
+                "underlying_return_pct": -10.0,
+                "net_pnl": -703.4
+              },
+              {
+                "underlying_return_pct": -20.0,
+                "net_pnl": -3554.8
+              },
+              {
+                "underlying_return_pct": -40.0,
+                "net_pnl": -9257.6
+              },
+              {
+                "underlying_return_pct": -60.0,
+                "net_pnl": -14960.4
+              },
+              {
+                "underlying_return_pct": -100.0,
+                "net_pnl": -26366.0
+              }
+            ]
+          }
+        },
+        {
+          "expiry": "2026-09-30",
+          "last_trade_not_quote_time": "2026-09-15 18:42:59+00:00",
+          "analysis": {
+            "status": "UNCERTAIN HISTORICAL SCENARIOS",
+            "horizon_sessions": 11,
+            "windows": 228,
+            "reference_price": 285.1400146484375,
+            "strike": 260.0,
+            "bid": 0.43,
+            "fee_per_contract": 2.0,
+            "slippage_per_share": 0.01,
+            "net_credit": 40.0,
+            "mean_net_pnl": 6.64,
+            "mean_interval": [
+              -63.93,
+              40.0
+            ],
+            "median_net_pnl": 40.0,
+            "loss_rate_pct": 0.9,
+            "worst_net_pnl": -6693.05,
+            "worst_5pct_mean": -593.93,
+            "mean_loss_breakeven_bid": 0.3636,
+            "stress": [
+              {
+                "underlying_return_pct": -10.0,
+                "net_pnl": -297.4
+              },
+              {
+                "underlying_return_pct": -20.0,
+                "net_pnl": -3148.8
+              },
+              {
+                "underlying_return_pct": -40.0,
+                "net_pnl": -8851.6
+              },
+              {
+                "underlying_return_pct": -60.0,
+                "net_pnl": -14554.4
+              },
+              {
+                "underlying_return_pct": -100.0,
+                "net_pnl": -25960.0
+              }
+            ]
+          }
+        },
+        {
+          "expiry": "2026-10-02",
+          "last_trade_not_quote_time": "2026-09-01 19:29:38+00:00",
+          "analysis": {
+            "status": "UNCERTAIN HISTORICAL SCENARIOS",
+            "horizon_sessions": 13,
+            "windows": 193,
+            "reference_price": 285.1400146484375,
+            "strike": 258.0,
+            "bid": 0.46,
+            "fee_per_contract": 2.0,
+            "slippage_per_share": 0.01,
+            "net_credit": 43.0,
+            "mean_net_pnl": 11.84,
+            "mean_interval": [
+              -50.09,
+              42.18
+            ],
+            "median_net_pnl": 43.0,
+            "loss_rate_pct": 2.6,
+            "worst_net_pnl": -4652.15,
+            "worst_5pct_mean": -558.33,
+            "mean_loss_breakeven_bid": 0.3416,
+            "stress": [
+              {
+                "underlying_return_pct": -10.0,
+                "net_pnl": -94.4
+              },
+              {
+                "underlying_return_pct": -20.0,
+                "net_pnl": -2945.8
+              },
+              {
+                "underlying_return_pct": -40.0,
+                "net_pnl": -8648.6
+              },
+              {
+                "underlying_return_pct": -60.0,
+                "net_pnl": -14351.4
+              },
+              {
+                "underlying_return_pct": -100.0,
+                "net_pnl": -25757.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "SPY": {
+      "price_date": "2026-09-15",
+      "source": "https://finance.yahoo.com/quote/SPY/options/",
+      "calendar_status": "INCOMPLETE CALENDAR",
+      "candidates": [
+        {
+          "expiry": "2026-09-25",
+          "last_trade_not_quote_time": "2026-09-15 20:10:51+00:00",
+          "analysis": {
+            "status": "UNCERTAIN HISTORICAL SCENARIOS",
+            "horizon_sessions": 8,
+            "windows": 313,
+            "reference_price": 757.3900146484375,
+            "strike": 715.0,
+            "bid": 0.83,
+            "fee_per_contract": 2.0,
+            "slippage_per_share": 0.01,
+            "net_credit": 80.0,
+            "mean_net_pnl": 19.36,
+            "mean_interval": [
+              -70.34,
+              74.95
+            ],
+            "median_net_pnl": 80.0,
+            "loss_rate_pct": 1.9,
+            "worst_net_pnl": -10311.42,
+            "worst_5pct_mean": -1106.35,
+            "mean_loss_breakeven_bid": 0.6364,
+            "stress": [
+              {
+                "underlying_return_pct": -10.0,
+                "net_pnl": -3254.9
+              },
+              {
+                "underlying_return_pct": -20.0,
+                "net_pnl": -10828.8
+              },
+              {
+                "underlying_return_pct": -40.0,
+                "net_pnl": -25976.6
+              },
+              {
+                "underlying_return_pct": -60.0,
+                "net_pnl": -41124.4
+              },
+              {
+                "underlying_return_pct": -100.0,
+                "net_pnl": -71420.0
+              }
+            ]
+          }
+        },
+        {
+          "expiry": "2026-09-30",
+          "last_trade_not_quote_time": "2026-09-15 19:55:07+00:00",
+          "analysis": {
+            "status": "UNCERTAIN HISTORICAL SCENARIOS",
+            "horizon_sessions": 11,
+            "windows": 228,
+            "reference_price": 757.3900146484375,
+            "strike": 708.0,
+            "bid": 1.07,
+            "fee_per_contract": 2.0,
+            "slippage_per_share": 0.01,
+            "net_credit": 104.0,
+            "mean_net_pnl": 40.01,
+            "mean_interval": [
+              -91.36,
+              104.0
+            ],
+            "median_net_pnl": 104.0,
+            "loss_rate_pct": 1.3,
+            "worst_net_pnl": -10153.26,
+            "worst_5pct_mean": -1111.74,
+            "mean_loss_breakeven_bid": 0.6699,
+            "stress": [
+              {
+                "underlying_return_pct": -10.0,
+                "net_pnl": -2530.9
+              },
+              {
+                "underlying_return_pct": -20.0,
+                "net_pnl": -10104.8
+              },
+              {
+                "underlying_return_pct": -40.0,
+                "net_pnl": -25252.6
+              },
+              {
+                "underlying_return_pct": -60.0,
+                "net_pnl": -40400.4
+              },
+              {
+                "underlying_return_pct": -100.0,
+                "net_pnl": -70696.0
+              }
+            ]
+          }
+        },
+        {
+          "expiry": "2026-10-02",
+          "last_trade_not_quote_time": "2026-09-15 19:59:40+00:00",
+          "analysis": {
+            "status": "UNCERTAIN HISTORICAL SCENARIOS",
+            "horizon_sessions": 13,
+            "windows": 193,
+            "reference_price": 757.3900146484375,
+            "strike": 700.0,
+            "bid": 1.05,
+            "fee_per_contract": 2.0,
+            "slippage_per_share": 0.01,
+            "net_credit": 102.0,
+            "mean_net_pnl": 37.89,
+            "mean_interval": [
+              -88.77,
+              102.0
+            ],
+            "median_net_pnl": 102.0,
+            "loss_rate_pct": 2.1,
+            "worst_net_pnl": -8652.77,
+            "worst_5pct_mean": -1135.28,
+            "mean_loss_breakeven_bid": 0.6711,
+            "stress": [
+              {
+                "underlying_return_pct": -10.0,
+                "net_pnl": -1732.9
+              },
+              {
+                "underlying_return_pct": -20.0,
+                "net_pnl": -9306.8
+              },
+              {
+                "underlying_return_pct": -40.0,
+                "net_pnl": -24454.6
+              },
+              {
+                "underlying_return_pct": -60.0,
+                "net_pnl": -39602.4
+              },
+              {
+                "underlying_return_pct": -100.0,
+                "net_pnl": -69898.0
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

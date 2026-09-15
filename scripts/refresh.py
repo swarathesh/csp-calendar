@@ -6,9 +6,12 @@ from zoneinfo import ZoneInfo
 from concurrent.futures import ThreadPoolExecutor
 import requests
 import yfinance as yf
+import pandas as pd
 from bs4 import BeautifulSoup
 from icalendar import Calendar
 from extras import chain_rows, fed_projections, analyst_targets
+from signals import risk_signal
+from payoff import payoff_scenarios
 from model import downside, relevant, timing, sessions, choose_put, last_completed_session
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -145,7 +148,8 @@ def analyse(symbol, events, sources, config):
     item={"symbol":symbol,"status":"DATA UNAVAILABLE","source":"https://finance.yahoo.com/quote/"+symbol+"/options/","candidates":[],"option_chains":[]}
     try:
         ticker=yf.Ticker(symbol)
-        hist=ticker.history(period=str(config["history_years"])+"y",auto_adjust=True)
+        history_years=max(config["history_years"], config.get("signal_history_years", config["history_years"]))
+        hist=ticker.history(period=str(history_years)+"y",auto_adjust=True)
         # Use completed sessions only; a partial daily bar must not distort historical tails.
         expected=last_completed_session(NOW)
         complete=hist[[d<=expected for d in hist.index.date]]["Close"].dropna()
@@ -163,12 +167,20 @@ def analyse(symbol, events, sources, config):
                     status="INCOMPLETE CALENDAR" if missing else status,
                     blockers=[e["title"] for e in near],missing_sources=missing,
                     chart=[round(float(x),2) for x in complete.tail(60)])
+        try:
+            if list(complete.index.date) != sessions(complete.index[0].date(), asof):
+                raise ValueError("Price history has missing market sessions")
+            item["ml_signal"] = risk_signal(complete.to_numpy(), complete.index.date)
+        except Exception:
+            item["ml_signal"] = {"status": "SIGNAL UNAVAILABLE", "usable": False}
         expiries=[date.fromisoformat(x) for x in ticker.options]
         expiries=[x for x in expiries if config["min_dte"]<=(x-entry).days<=config["max_dte"]]
         expiries=sorted(expiries,key=lambda d:abs((d-entry).days-config["target_dte"]))[:3]
+        screen_start=(pd.Timestamp(TODAY)-pd.DateOffset(years=config["history_years"])).date()
+        screen=complete[[d >= screen_start for d in complete.index.date]]
         for expiry in sorted(expiries):
             horizon=len(sessions(asof+timedelta(days=1),expiry))
-            risk=downside(complete.to_numpy(),horizon,config["tail_quantile"])
+            risk=downside(screen.to_numpy(),horizon,config["tail_quantile"])
             ceiling=spot*(1+risk["tail"])
             bundle=ticker.option_chain(str(expiry))
             chain=bundle.puts
@@ -187,6 +199,14 @@ def analyse(symbol, events, sources, config):
                            return_pct=round(bid/strike*100,2),
                            quote_note="Delayed indicative bid; confirm in broker. Bid timestamp not supplied.",
                            last_trade=str(put.get("lastTradeDate","Unknown")))
+                try:
+                    costs = config.get("scenario_costs", {})
+                    if list(complete.index.date) != sessions(complete.index[0].date(), asof):
+                        raise ValueError("Price history has missing market sessions")
+                    row["payoff_scenarios"] = payoff_scenarios(complete.to_numpy(), horizon, strike, bid,
+                        fee=costs.get("fee_per_contract", 2.), slippage=costs.get("slippage_per_share", .01))
+                except Exception:
+                    row["payoff_scenarios"] = {"status": "SCENARIOS UNAVAILABLE"}
             item["candidates"].append(row)
         if not expiries: item["detail"]="No listed expirations in the configured window."
     except Exception as exc:
