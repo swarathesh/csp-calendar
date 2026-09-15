@@ -1,0 +1,2383 @@
+{
+  "collected_at": "2026-09-15T21:08:32.842252+00:00",
+  "source": "Yahoo Finance via yfinance; adjusted completed daily closes",
+  "history_years": 5,
+  "symbols": {
+    "SOXL": {
+      "observations": 1254,
+      "history_from": "2021-09-16",
+      "history_through": "2026-09-15",
+      "input_sha256": "beeb213eb2d373c0f91849a75a58b0fd797bc211a07a2195a89b1960c3a0fd17",
+      "result": {
+        "version": "logistic-v1",
+        "horizon_sessions": 10,
+        "drop_pct": 5.0,
+        "features": [
+          "5-session return",
+          "20-session return",
+          "60-session return",
+          "20-session volatility",
+          "Distance from 60-session average",
+          "Drawdown from 60-session high"
+        ],
+        "status": "NO VALIDATED EDGE",
+        "usable": false,
+        "price_date": "2026-09-15",
+        "probability_pct": 65.4,
+        "baseline_pct": 63.8,
+        "brier": 0.2363,
+        "baseline_brier": 0.2326,
+        "brier_skill_pct": -1.6,
+        "evaluation_from": "2024-01-03",
+        "evaluation_through": "2026-09-04",
+        "all": {
+          "windows": 67,
+          "events": 43,
+          "rate_pct": 64.2,
+          "interval_pct": [
+            52.2,
+            74.6
+          ]
+        },
+        "lower": {
+          "windows": 35,
+          "events": 22,
+          "rate_pct": 62.9,
+          "interval_pct": [
+            46.3,
+            76.8
+          ]
+        },
+        "higher": {
+          "windows": 32,
+          "events": 21,
+          "rate_pct": 65.6,
+          "interval_pct": [
+            48.3,
+            79.6
+          ]
+        },
+        "evaluation": [
+          {
+            "date": "2024-01-03",
+            "through": "2024-01-18",
+            "probability": 0.6682830999701799,
+            "baseline": 0.6964285714285714,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-01-18",
+            "through": "2024-02-01",
+            "probability": 0.6989387259350086,
+            "baseline": 0.7023346303501945,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-02-01",
+            "through": "2024-02-15",
+            "probability": 0.6488081311033277,
+            "baseline": 0.6889312977099237,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-02-15",
+            "through": "2024-03-01",
+            "probability": 0.6477660596402145,
+            "baseline": 0.6891385767790262,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-03-01",
+            "through": "2024-03-15",
+            "probability": 0.6942514460875701,
+            "baseline": 0.6819852941176471,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-03-15",
+            "through": "2024-04-01",
+            "probability": 0.6859236923119433,
+            "baseline": 0.6732851985559567,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-04-01",
+            "through": "2024-04-15",
+            "probability": 0.6459388106107827,
+            "baseline": 0.6773049645390071,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-04-15",
+            "through": "2024-04-29",
+            "probability": 0.5736392867347523,
+            "baseline": 0.6759581881533101,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-04-29",
+            "through": "2024-05-13",
+            "probability": 0.7014081777557064,
+            "baseline": 0.6815068493150684,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-05-13",
+            "through": "2024-05-28",
+            "probability": 0.6641080450012476,
+            "baseline": 0.6801346801346801,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-05-28",
+            "through": "2024-06-11",
+            "probability": 0.621385111077053,
+            "baseline": 0.6721854304635762,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-06-11",
+            "through": "2024-06-26",
+            "probability": 0.5894183963959028,
+            "baseline": 0.6628664495114006,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-06-26",
+            "through": "2024-07-11",
+            "probability": 0.5686142380096162,
+            "baseline": 0.655448717948718,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-07-11",
+            "through": "2024-07-25",
+            "probability": 0.6201685240293077,
+            "baseline": 0.6561514195583596,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-07-25",
+            "through": "2024-08-08",
+            "probability": 0.7024346741170907,
+            "baseline": 0.65527950310559,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-08-08",
+            "through": "2024-08-22",
+            "probability": 0.8420219260325873,
+            "baseline": 0.6605504587155964,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-08-22",
+            "through": "2024-09-06",
+            "probability": 0.8166257524868437,
+            "baseline": 0.6641566265060241,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-09-06",
+            "through": "2024-09-20",
+            "probability": 0.706371095517572,
+            "baseline": 0.6617210682492581,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-09-20",
+            "through": "2024-10-04",
+            "probability": 0.7392708468511682,
+            "baseline": 0.6666666666666666,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-10-04",
+            "through": "2024-10-18",
+            "probability": 0.626474310480388,
+            "baseline": 0.6585014409221902,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-10-18",
+            "through": "2024-11-01",
+            "probability": 0.5992640053633782,
+            "baseline": 0.6548295454545454,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-11-01",
+            "through": "2024-11-15",
+            "probability": 0.609269080312086,
+            "baseline": 0.6568627450980392,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-11-15",
+            "through": "2024-12-02",
+            "probability": 0.5851424961997121,
+            "baseline": 0.6602209944751382,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-12-02",
+            "through": "2024-12-16",
+            "probability": 0.6264204366183315,
+            "baseline": 0.6648501362397821,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-12-16",
+            "through": "2024-12-31",
+            "probability": 0.6067219854904191,
+            "baseline": 0.6599462365591398,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-12-31",
+            "through": "2025-01-16",
+            "probability": 0.604808643253118,
+            "baseline": 0.6631299734748011,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-01-16",
+            "through": "2025-01-31",
+            "probability": 0.6166804406269156,
+            "baseline": 0.6636125654450262,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-01-31",
+            "through": "2025-02-14",
+            "probability": 0.6726032628377062,
+            "baseline": 0.665374677002584,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-02-14",
+            "through": "2025-03-03",
+            "probability": 0.6960456421967878,
+            "baseline": 0.6658163265306123,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-03-03",
+            "through": "2025-03-17",
+            "probability": 0.6049365564490977,
+            "baseline": 0.663727959697733,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-03-17",
+            "through": "2025-03-31",
+            "probability": 0.7148871604994262,
+            "baseline": 0.667910447761194,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-03-31",
+            "through": "2025-04-14",
+            "probability": 0.6236000662267069,
+            "baseline": 0.6670761670761671,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-04-14",
+            "through": "2025-04-29",
+            "probability": 0.86707397633441,
+            "baseline": 0.6711165048543689,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-04-29",
+            "through": "2025-05-13",
+            "probability": 0.8928405581107967,
+            "baseline": 0.6738609112709832,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-05-13",
+            "through": "2025-05-28",
+            "probability": 0.7496303465710468,
+            "baseline": 0.6706161137440758,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-05-28",
+            "through": "2025-06-11",
+            "probability": 0.655861121869023,
+            "baseline": 0.6639344262295082,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-06-11",
+            "through": "2025-06-26",
+            "probability": 0.6630661811330926,
+            "baseline": 0.6655092592592593,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-06-26",
+            "through": "2025-07-11",
+            "probability": 0.6821508250966175,
+            "baseline": 0.6613272311212814,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-07-11",
+            "through": "2025-07-25",
+            "probability": 0.6874845780191624,
+            "baseline": 0.6561085972850679,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-07-25",
+            "through": "2025-08-08",
+            "probability": 0.623650931476982,
+            "baseline": 0.6510067114093959,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-08-08",
+            "through": "2025-08-22",
+            "probability": 0.6321019328335902,
+            "baseline": 0.6537610619469026,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-08-22",
+            "through": "2025-09-08",
+            "probability": 0.6407202348901603,
+            "baseline": 0.650984682713348,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-09-08",
+            "through": "2025-09-22",
+            "probability": 0.6310788079444637,
+            "baseline": 0.6504329004329005,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-09-22",
+            "through": "2025-10-06",
+            "probability": 0.6310377913047983,
+            "baseline": 0.6488222698072805,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-10-06",
+            "through": "2025-10-20",
+            "probability": 0.6248166740503853,
+            "baseline": 0.6419491525423728,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-10-20",
+            "through": "2025-11-03",
+            "probability": 0.6520685227571078,
+            "baseline": 0.6383647798742138,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-11-03",
+            "through": "2025-11-17",
+            "probability": 0.6563424029855004,
+            "baseline": 0.6379668049792531,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-11-17",
+            "through": "2025-12-02",
+            "probability": 0.6257740181153854,
+            "baseline": 0.6386036960985626,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-12-02",
+            "through": "2025-12-16",
+            "probability": 0.6830893075858155,
+            "baseline": 0.6422764227642277,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-12-16",
+            "through": "2025-12-31",
+            "probability": 0.6318584761203948,
+            "baseline": 0.6388329979879276,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-12-31",
+            "through": "2026-01-15",
+            "probability": 0.6146641238474766,
+            "baseline": 0.6424302788844621,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-01-15",
+            "through": "2026-01-30",
+            "probability": 0.6352481984028325,
+            "baseline": 0.6370808678500987,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-01-30",
+            "through": "2026-02-13",
+            "probability": 0.6315643893539252,
+            "baseline": 0.6328125,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-02-13",
+            "through": "2026-03-02",
+            "probability": 0.6569050978255113,
+            "baseline": 0.6334622823984526,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-03-02",
+            "through": "2026-03-16",
+            "probability": 0.6236270299314524,
+            "baseline": 0.6312260536398467,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-03-16",
+            "through": "2026-03-30",
+            "probability": 0.6437075197320417,
+            "baseline": 0.6337760910815939,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-03-30",
+            "through": "2026-04-14",
+            "probability": 0.6381290450670021,
+            "baseline": 0.6353383458646616,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-04-14",
+            "through": "2026-04-28",
+            "probability": 0.6950532706138299,
+            "baseline": 0.638733705772812,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-04-28",
+            "through": "2026-05-12",
+            "probability": 0.6764236071396342,
+            "baseline": 0.6328413284132841,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-05-12",
+            "through": "2026-05-27",
+            "probability": 0.6870955807132789,
+            "baseline": 0.6288848263254113,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-05-27",
+            "through": "2026-06-10",
+            "probability": 0.6866240036136096,
+            "baseline": 0.6259057971014492,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-06-10",
+            "through": "2026-06-25",
+            "probability": 0.7141877921994625,
+            "baseline": 0.6247755834829444,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-06-25",
+            "through": "2026-07-10",
+            "probability": 0.8422503275995412,
+            "baseline": 0.6272241992882562,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-07-10",
+            "through": "2026-07-24",
+            "probability": 0.7268378358921989,
+            "baseline": 0.6278659611992945,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-07-24",
+            "through": "2026-08-07",
+            "probability": 0.7197474563768267,
+            "baseline": 0.6311188811188811,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-08-07",
+            "through": "2026-08-21",
+            "probability": 0.7172051868569147,
+            "baseline": 0.634315424610052,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-08-21",
+            "through": "2026-09-04",
+            "probability": 0.6638311153852504,
+            "baseline": 0.634020618556701,
+            "outcome": 1,
+            "lower_risk": false
+          }
+        ]
+      }
+    },
+    "SMH": {
+      "observations": 1254,
+      "history_from": "2021-09-16",
+      "history_through": "2026-09-15",
+      "input_sha256": "affb80e60a0a882075fe398226a8e0d28a03307c5e32981891ac3155cce64bee",
+      "result": {
+        "version": "logistic-v1",
+        "horizon_sessions": 10,
+        "drop_pct": 5.0,
+        "features": [
+          "5-session return",
+          "20-session return",
+          "60-session return",
+          "20-session volatility",
+          "Distance from 60-session average",
+          "Drawdown from 60-session high"
+        ],
+        "status": "ELEVATED DOWNSIDE RISK",
+        "usable": true,
+        "price_date": "2026-09-15",
+        "probability_pct": 31.8,
+        "baseline_pct": 29.8,
+        "brier": 0.188,
+        "baseline_brier": 0.2005,
+        "brier_skill_pct": 6.2,
+        "evaluation_from": "2024-01-03",
+        "evaluation_through": "2026-09-04",
+        "all": {
+          "windows": 67,
+          "events": 18,
+          "rate_pct": 26.9,
+          "interval_pct": [
+            17.7,
+            38.5
+          ]
+        },
+        "lower": {
+          "windows": 43,
+          "events": 8,
+          "rate_pct": 18.6,
+          "interval_pct": [
+            9.7,
+            32.6
+          ]
+        },
+        "higher": {
+          "windows": 24,
+          "events": 10,
+          "rate_pct": 41.7,
+          "interval_pct": [
+            24.5,
+            61.2
+          ]
+        },
+        "evaluation": [
+          {
+            "date": "2024-01-03",
+            "through": "2024-01-18",
+            "probability": 0.2780664785196589,
+            "baseline": 0.3373015873015873,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-01-18",
+            "through": "2024-02-01",
+            "probability": 0.25653048644515725,
+            "baseline": 0.3404669260700389,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-02-01",
+            "through": "2024-02-15",
+            "probability": 0.24668501603582088,
+            "baseline": 0.33396946564885494,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-02-15",
+            "through": "2024-03-01",
+            "probability": 0.2161763680289509,
+            "baseline": 0.32771535580524347,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-03-01",
+            "through": "2024-03-15",
+            "probability": 0.21111445956904934,
+            "baseline": 0.32169117647058826,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-03-15",
+            "through": "2024-04-01",
+            "probability": 0.3166076141706757,
+            "baseline": 0.315884476534296,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-04-01",
+            "through": "2024-04-15",
+            "probability": 0.2303598640676962,
+            "baseline": 0.3120567375886525,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-04-15",
+            "through": "2024-04-29",
+            "probability": 0.22986360188285457,
+            "baseline": 0.30662020905923343,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-04-29",
+            "through": "2024-05-13",
+            "probability": 0.2854191330370897,
+            "baseline": 0.3150684931506849,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-05-13",
+            "through": "2024-05-28",
+            "probability": 0.3055148650609842,
+            "baseline": 0.3148148148148148,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-05-28",
+            "through": "2024-06-11",
+            "probability": 0.19728718043486038,
+            "baseline": 0.30960264900662254,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-06-11",
+            "through": "2024-06-26",
+            "probability": 0.19067934665124842,
+            "baseline": 0.30456026058631924,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-06-26",
+            "through": "2024-07-11",
+            "probability": 0.2774679278610146,
+            "baseline": 0.29967948717948717,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-07-11",
+            "through": "2024-07-25",
+            "probability": 0.23624455465603345,
+            "baseline": 0.2981072555205047,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-07-25",
+            "through": "2024-08-08",
+            "probability": 0.4254683003609526,
+            "baseline": 0.30124223602484473,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-08-08",
+            "through": "2024-08-22",
+            "probability": 0.603677326387125,
+            "baseline": 0.3119266055045872,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-08-22",
+            "through": "2024-09-06",
+            "probability": 0.47209597686010174,
+            "baseline": 0.31626506024096385,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-09-06",
+            "through": "2024-09-20",
+            "probability": 0.47289492918799586,
+            "baseline": 0.31602373887240354,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-09-20",
+            "through": "2024-10-04",
+            "probability": 0.3932469188114322,
+            "baseline": 0.3216374269005848,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-10-04",
+            "through": "2024-10-18",
+            "probability": 0.26674319193857704,
+            "baseline": 0.3170028818443804,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-10-18",
+            "through": "2024-11-01",
+            "probability": 0.28899785332152306,
+            "baseline": 0.31392045454545453,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-11-01",
+            "through": "2024-11-15",
+            "probability": 0.3190624399865085,
+            "baseline": 0.31092436974789917,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-11-15",
+            "through": "2024-12-02",
+            "probability": 0.33770564855015794,
+            "baseline": 0.3080110497237569,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-12-02",
+            "through": "2024-12-16",
+            "probability": 0.2693212217677787,
+            "baseline": 0.30926430517711173,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-12-16",
+            "through": "2024-12-31",
+            "probability": 0.23309913505483043,
+            "baseline": 0.30510752688172044,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-12-31",
+            "through": "2025-01-16",
+            "probability": 0.2888832995889965,
+            "baseline": 0.30238726790450926,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-01-16",
+            "through": "2025-01-31",
+            "probability": 0.27435363101819366,
+            "baseline": 0.299738219895288,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-01-31",
+            "through": "2025-02-14",
+            "probability": 0.4031232329672887,
+            "baseline": 0.29844961240310075,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-02-14",
+            "through": "2025-03-03",
+            "probability": 0.3479233048030432,
+            "baseline": 0.3022959183673469,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-03-03",
+            "through": "2025-03-17",
+            "probability": 0.36988559369303214,
+            "baseline": 0.30100755667506296,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-03-17",
+            "through": "2025-03-31",
+            "probability": 0.37430488362422365,
+            "baseline": 0.30970149253731344,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-03-31",
+            "through": "2025-04-14",
+            "probability": 0.36485189843990895,
+            "baseline": 0.3083538083538084,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-04-14",
+            "through": "2025-04-29",
+            "probability": 0.608795422138303,
+            "baseline": 0.316747572815534,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-04-29",
+            "through": "2025-05-13",
+            "probability": 0.5787287434609095,
+            "baseline": 0.32014388489208634,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-05-13",
+            "through": "2025-05-28",
+            "probability": 0.24003659606222533,
+            "baseline": 0.3187203791469194,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-05-28",
+            "through": "2025-06-11",
+            "probability": 0.25097209718464164,
+            "baseline": 0.3149882903981265,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-06-11",
+            "through": "2025-06-26",
+            "probability": 0.22976345326696143,
+            "baseline": 0.3113425925925926,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-06-26",
+            "through": "2025-07-11",
+            "probability": 0.20639672945465903,
+            "baseline": 0.30778032036613273,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-07-11",
+            "through": "2025-07-25",
+            "probability": 0.22619159975892444,
+            "baseline": 0.3042986425339366,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-07-25",
+            "through": "2025-08-08",
+            "probability": 0.2355152609176691,
+            "baseline": 0.30089485458612975,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-08-08",
+            "through": "2025-08-22",
+            "probability": 0.23667999137064386,
+            "baseline": 0.2975663716814159,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-08-22",
+            "through": "2025-09-08",
+            "probability": 0.2514897456327844,
+            "baseline": 0.29431072210065645,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-09-08",
+            "through": "2025-09-22",
+            "probability": 0.24507456260509855,
+            "baseline": 0.2911255411255411,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-09-22",
+            "through": "2025-10-06",
+            "probability": 0.19950192237042705,
+            "baseline": 0.2880085653104925,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-10-06",
+            "through": "2025-10-20",
+            "probability": 0.16491753386391314,
+            "baseline": 0.2849576271186441,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-10-20",
+            "through": "2025-11-03",
+            "probability": 0.2267151553121135,
+            "baseline": 0.28197064989517817,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-11-03",
+            "through": "2025-11-17",
+            "probability": 0.23264106713864824,
+            "baseline": 0.2821576763485477,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-11-17",
+            "through": "2025-12-02",
+            "probability": 0.2837816785643124,
+            "baseline": 0.28234086242299794,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-12-02",
+            "through": "2025-12-16",
+            "probability": 0.2829240306165109,
+            "baseline": 0.2896341463414634,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-12-16",
+            "through": "2025-12-31",
+            "probability": 0.28465246081658163,
+            "baseline": 0.28672032193158953,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-12-31",
+            "through": "2026-01-15",
+            "probability": 0.2722757848454393,
+            "baseline": 0.2908366533864542,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-01-15",
+            "through": "2026-01-30",
+            "probability": 0.21401171596798424,
+            "baseline": 0.2879684418145957,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-01-30",
+            "through": "2026-02-13",
+            "probability": 0.22623457762735535,
+            "baseline": 0.28515625,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-02-13",
+            "through": "2026-03-02",
+            "probability": 0.2747240187424831,
+            "baseline": 0.2862669245647969,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-03-02",
+            "through": "2026-03-16",
+            "probability": 0.2822516640787729,
+            "baseline": 0.28544061302681994,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-03-16",
+            "through": "2026-03-30",
+            "probability": 0.30485103495367466,
+            "baseline": 0.2893738140417457,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-03-30",
+            "through": "2026-04-14",
+            "probability": 0.3658614854751295,
+            "baseline": 0.287593984962406,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-04-14",
+            "through": "2026-04-28",
+            "probability": 0.2381093938107366,
+            "baseline": 0.29236499068901306,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-04-28",
+            "through": "2026-05-12",
+            "probability": 0.1664609406872512,
+            "baseline": 0.2896678966789668,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-05-12",
+            "through": "2026-05-27",
+            "probability": 0.1824047008657428,
+            "baseline": 0.2870201096892139,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-05-27",
+            "through": "2026-06-10",
+            "probability": 0.19570311201070895,
+            "baseline": 0.28532608695652173,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-06-10",
+            "through": "2026-06-25",
+            "probability": 0.3488865321167417,
+            "baseline": 0.2845601436265709,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-06-25",
+            "through": "2026-07-10",
+            "probability": 0.39186264221401906,
+            "baseline": 0.28647686832740216,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-07-10",
+            "through": "2026-07-24",
+            "probability": 0.40520759822375363,
+            "baseline": 0.2892416225749559,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-07-24",
+            "through": "2026-08-07",
+            "probability": 0.44183773800009,
+            "baseline": 0.2937062937062937,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-08-07",
+            "through": "2026-08-21",
+            "probability": 0.3990273953022605,
+            "baseline": 0.29982668977469673,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-08-21",
+            "through": "2026-09-04",
+            "probability": 0.35142948662654644,
+            "baseline": 0.29896907216494845,
+            "outcome": 0,
+            "lower_risk": false
+          }
+        ]
+      }
+    },
+    "IWM": {
+      "observations": 1254,
+      "history_from": "2021-09-16",
+      "history_through": "2026-09-15",
+      "input_sha256": "69de48c939d80b69bfbffc26cd23323f01732e93b1fa8028297252f4495a7ed9",
+      "result": {
+        "version": "logistic-v1",
+        "horizon_sessions": 10,
+        "drop_pct": 5.0,
+        "features": [
+          "5-session return",
+          "20-session return",
+          "60-session return",
+          "20-session volatility",
+          "Distance from 60-session average",
+          "Drawdown from 60-session high"
+        ],
+        "status": "NO VALIDATED EDGE",
+        "usable": false,
+        "price_date": "2026-09-15",
+        "probability_pct": 15.6,
+        "baseline_pct": 14.3,
+        "brier": 0.1123,
+        "baseline_brier": 0.1084,
+        "brier_skill_pct": -3.6,
+        "evaluation_from": "2024-01-03",
+        "evaluation_through": "2026-09-04",
+        "all": {
+          "windows": 67,
+          "events": 8,
+          "rate_pct": 11.9,
+          "interval_pct": [
+            6.2,
+            21.8
+          ]
+        },
+        "lower": {
+          "windows": 37,
+          "events": 5,
+          "rate_pct": 13.5,
+          "interval_pct": [
+            5.9,
+            28.0
+          ]
+        },
+        "higher": {
+          "windows": 30,
+          "events": 3,
+          "rate_pct": 10.0,
+          "interval_pct": [
+            3.5,
+            25.6
+          ]
+        },
+        "evaluation": [
+          {
+            "date": "2024-01-03",
+            "through": "2024-01-18",
+            "probability": 0.28507128762010275,
+            "baseline": 0.19444444444444445,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-01-18",
+            "through": "2024-02-01",
+            "probability": 0.30092756460107034,
+            "baseline": 0.19844357976653695,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-02-01",
+            "through": "2024-02-15",
+            "probability": 0.2443291427259385,
+            "baseline": 0.1946564885496183,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-02-15",
+            "through": "2024-03-01",
+            "probability": 0.2304358363296248,
+            "baseline": 0.19101123595505617,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-03-01",
+            "through": "2024-03-15",
+            "probability": 0.2087976383726644,
+            "baseline": 0.1875,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-03-15",
+            "through": "2024-04-01",
+            "probability": 0.1870601523078569,
+            "baseline": 0.18411552346570398,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-04-01",
+            "through": "2024-04-15",
+            "probability": 0.1826500596397592,
+            "baseline": 0.18085106382978725,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-04-15",
+            "through": "2024-04-29",
+            "probability": 0.18812486127633124,
+            "baseline": 0.1794425087108014,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-04-29",
+            "through": "2024-05-13",
+            "probability": 0.1874403996839787,
+            "baseline": 0.18664383561643835,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-05-13",
+            "through": "2024-05-28",
+            "probability": 0.1746896327089462,
+            "baseline": 0.1835016835016835,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-05-28",
+            "through": "2024-06-11",
+            "probability": 0.1755966230752495,
+            "baseline": 0.1804635761589404,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-06-11",
+            "through": "2024-06-26",
+            "probability": 0.16764538288772254,
+            "baseline": 0.1775244299674267,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-06-26",
+            "through": "2024-07-11",
+            "probability": 0.1577430882856399,
+            "baseline": 0.17467948717948717,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-07-11",
+            "through": "2024-07-25",
+            "probability": 0.16073855865416778,
+            "baseline": 0.1719242902208202,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-07-25",
+            "through": "2024-08-08",
+            "probability": 0.18574378950119927,
+            "baseline": 0.16925465838509315,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-08-08",
+            "through": "2024-08-22",
+            "probability": 0.21645174213078658,
+            "baseline": 0.1712538226299694,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-08-22",
+            "through": "2024-09-06",
+            "probability": 0.2066372351000817,
+            "baseline": 0.17771084337349397,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-09-06",
+            "through": "2024-09-20",
+            "probability": 0.19700752997612905,
+            "baseline": 0.17507418397626112,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-09-20",
+            "through": "2024-10-04",
+            "probability": 0.1977944586457749,
+            "baseline": 0.17690058479532164,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-10-04",
+            "through": "2024-10-18",
+            "probability": 0.16704841314330246,
+            "baseline": 0.17435158501440923,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-10-18",
+            "through": "2024-11-01",
+            "probability": 0.15472884913172535,
+            "baseline": 0.171875,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-11-01",
+            "through": "2024-11-15",
+            "probability": 0.15741198435535567,
+            "baseline": 0.16946778711484595,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-11-15",
+            "through": "2024-12-02",
+            "probability": 0.2153452029723085,
+            "baseline": 0.1671270718232044,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-12-02",
+            "through": "2024-12-16",
+            "probability": 0.21748240535405144,
+            "baseline": 0.16621253405994552,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-12-16",
+            "through": "2024-12-31",
+            "probability": 0.15379192416840434,
+            "baseline": 0.1639784946236559,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-12-31",
+            "through": "2025-01-16",
+            "probability": 0.16241497975797764,
+            "baseline": 0.1724137931034483,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-01-16",
+            "through": "2025-01-31",
+            "probability": 0.1610457823441087,
+            "baseline": 0.17146596858638743,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-01-31",
+            "through": "2025-02-14",
+            "probability": 0.159030831998024,
+            "baseline": 0.16925064599483206,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-02-14",
+            "through": "2025-03-03",
+            "probability": 0.14299861723682344,
+            "baseline": 0.16709183673469388,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-03-03",
+            "through": "2025-03-17",
+            "probability": 0.13465764060316998,
+            "baseline": 0.16876574307304787,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-03-17",
+            "through": "2025-03-31",
+            "probability": 0.14419295248889688,
+            "baseline": 0.1791044776119403,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-03-31",
+            "through": "2025-04-14",
+            "probability": 0.1696034938098332,
+            "baseline": 0.17813267813267813,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-04-14",
+            "through": "2025-04-29",
+            "probability": 0.15711015471153342,
+            "baseline": 0.18446601941747573,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-04-29",
+            "through": "2025-05-13",
+            "probability": 0.16298175569592754,
+            "baseline": 0.18705035971223022,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-05-13",
+            "through": "2025-05-28",
+            "probability": 0.16756052042424888,
+            "baseline": 0.1848341232227488,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-05-28",
+            "through": "2025-06-11",
+            "probability": 0.189530093510819,
+            "baseline": 0.18266978922716628,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-06-11",
+            "through": "2025-06-26",
+            "probability": 0.1847943367956472,
+            "baseline": 0.18055555555555555,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-06-26",
+            "through": "2025-07-11",
+            "probability": 0.1849090351913662,
+            "baseline": 0.17848970251716248,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-07-11",
+            "through": "2025-07-25",
+            "probability": 0.21111816374435305,
+            "baseline": 0.17647058823529413,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-07-25",
+            "through": "2025-08-08",
+            "probability": 0.18723286756430244,
+            "baseline": 0.174496644295302,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-08-08",
+            "through": "2025-08-22",
+            "probability": 0.17001482488117792,
+            "baseline": 0.1736725663716814,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-08-22",
+            "through": "2025-09-08",
+            "probability": 0.1665637892777007,
+            "baseline": 0.17177242888402625,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-09-08",
+            "through": "2025-09-22",
+            "probability": 0.16766194492210046,
+            "baseline": 0.1699134199134199,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-09-22",
+            "through": "2025-10-06",
+            "probability": 0.16646334943103192,
+            "baseline": 0.16809421841541755,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-10-06",
+            "through": "2025-10-20",
+            "probability": 0.161547381162911,
+            "baseline": 0.1663135593220339,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-10-20",
+            "through": "2025-11-03",
+            "probability": 0.15773169954832095,
+            "baseline": 0.16457023060796647,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-11-03",
+            "through": "2025-11-17",
+            "probability": 0.16653295530964937,
+            "baseline": 0.1628630705394191,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-11-17",
+            "through": "2025-12-02",
+            "probability": 0.1793140395366012,
+            "baseline": 0.16119096509240247,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-12-02",
+            "through": "2025-12-16",
+            "probability": 0.15123218796458932,
+            "baseline": 0.16463414634146342,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-12-16",
+            "through": "2025-12-31",
+            "probability": 0.15757425827103447,
+            "baseline": 0.16297786720321933,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-12-31",
+            "through": "2026-01-15",
+            "probability": 0.16933044698825822,
+            "baseline": 0.16135458167330677,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-01-15",
+            "through": "2026-01-30",
+            "probability": 0.14599292472880218,
+            "baseline": 0.15976331360946747,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-01-30",
+            "through": "2026-02-13",
+            "probability": 0.1628038525023984,
+            "baseline": 0.158203125,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-02-13",
+            "through": "2026-03-02",
+            "probability": 0.15982699312035512,
+            "baseline": 0.1576402321083172,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-03-02",
+            "through": "2026-03-16",
+            "probability": 0.14655727821504688,
+            "baseline": 0.15613026819923373,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-03-16",
+            "through": "2026-03-30",
+            "probability": 0.1691040638385619,
+            "baseline": 0.15844402277039848,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-03-30",
+            "through": "2026-04-14",
+            "probability": 0.17804965664496433,
+            "baseline": 0.1588345864661654,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-04-14",
+            "through": "2026-04-28",
+            "probability": 0.1283450676727929,
+            "baseline": 0.15735567970204842,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-04-28",
+            "through": "2026-05-12",
+            "probability": 0.14701566906172683,
+            "baseline": 0.1559040590405904,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-05-12",
+            "through": "2026-05-27",
+            "probability": 0.1517371422069593,
+            "baseline": 0.15447897623400367,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-05-27",
+            "through": "2026-06-10",
+            "probability": 0.12777601684285764,
+            "baseline": 0.15307971014492755,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-06-10",
+            "through": "2026-06-25",
+            "probability": 0.16023334560975513,
+            "baseline": 0.15170556552962297,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-06-25",
+            "through": "2026-07-10",
+            "probability": 0.13714045525069993,
+            "baseline": 0.15035587188612098,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-07-10",
+            "through": "2026-07-24",
+            "probability": 0.14207712583758003,
+            "baseline": 0.1490299823633157,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-07-24",
+            "through": "2026-08-07",
+            "probability": 0.15003732220946167,
+            "baseline": 0.14772727272727273,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-08-07",
+            "through": "2026-08-21",
+            "probability": 0.1262352568731682,
+            "baseline": 0.1464471403812825,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-08-21",
+            "through": "2026-09-04",
+            "probability": 0.14022835312173262,
+            "baseline": 0.14518900343642613,
+            "outcome": 0,
+            "lower_risk": true
+          }
+        ]
+      }
+    },
+    "SPY": {
+      "observations": 1254,
+      "history_from": "2021-09-16",
+      "history_through": "2026-09-15",
+      "input_sha256": "7137ca5f60df7efd22a4fabe674b9e016115a252724712f8b1084a2659842531",
+      "result": {
+        "version": "logistic-v1",
+        "horizon_sessions": 10,
+        "drop_pct": 5.0,
+        "features": [
+          "5-session return",
+          "20-session return",
+          "60-session return",
+          "20-session volatility",
+          "Distance from 60-session average",
+          "Drawdown from 60-session high"
+        ],
+        "status": "NO VALIDATED EDGE",
+        "usable": false,
+        "price_date": "2026-09-15",
+        "probability_pct": 7.7,
+        "baseline_pct": 8.2,
+        "brier": 0.0457,
+        "baseline_brier": 0.0472,
+        "brier_skill_pct": 3.1,
+        "evaluation_from": "2024-01-03",
+        "evaluation_through": "2026-09-04",
+        "all": {
+          "windows": 67,
+          "events": 3,
+          "rate_pct": 4.5,
+          "interval_pct": [
+            1.5,
+            12.4
+          ]
+        },
+        "lower": {
+          "windows": 55,
+          "events": 1,
+          "rate_pct": 1.8,
+          "interval_pct": [
+            0.3,
+            9.6
+          ]
+        },
+        "higher": {
+          "windows": 12,
+          "events": 2,
+          "rate_pct": 16.7,
+          "interval_pct": [
+            4.7,
+            44.8
+          ]
+        },
+        "evaluation": [
+          {
+            "date": "2024-01-03",
+            "through": "2024-01-18",
+            "probability": 0.12599422299545776,
+            "baseline": 0.1388888888888889,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-01-18",
+            "through": "2024-02-01",
+            "probability": 0.12816389770879658,
+            "baseline": 0.13618677042801555,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-02-01",
+            "through": "2024-02-15",
+            "probability": 0.12020659991340968,
+            "baseline": 0.13358778625954199,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-02-15",
+            "through": "2024-03-01",
+            "probability": 0.11237732005610389,
+            "baseline": 0.13108614232209737,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-03-01",
+            "through": "2024-03-15",
+            "probability": 0.10666621637674284,
+            "baseline": 0.12867647058823528,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-03-15",
+            "through": "2024-04-01",
+            "probability": 0.10256755518195602,
+            "baseline": 0.1263537906137184,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-04-01",
+            "through": "2024-04-15",
+            "probability": 0.09274174420978709,
+            "baseline": 0.12411347517730496,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-04-15",
+            "through": "2024-04-29",
+            "probability": 0.10658751505549993,
+            "baseline": 0.12195121951219512,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-04-29",
+            "through": "2024-05-13",
+            "probability": 0.09533483807175268,
+            "baseline": 0.11986301369863013,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-05-13",
+            "through": "2024-05-28",
+            "probability": 0.08622387030964054,
+            "baseline": 0.11784511784511785,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-05-28",
+            "through": "2024-06-11",
+            "probability": 0.08199502178115484,
+            "baseline": 0.11589403973509933,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-06-11",
+            "through": "2024-06-26",
+            "probability": 0.07182305696438929,
+            "baseline": 0.11400651465798045,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-06-26",
+            "through": "2024-07-11",
+            "probability": 0.07107089991960779,
+            "baseline": 0.11217948717948718,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-07-11",
+            "through": "2024-07-25",
+            "probability": 0.06866430715113483,
+            "baseline": 0.11041009463722397,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-07-25",
+            "through": "2024-08-08",
+            "probability": 0.10133035457101332,
+            "baseline": 0.10869565217391304,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-08-08",
+            "through": "2024-08-22",
+            "probability": 0.1464639768726108,
+            "baseline": 0.11009174311926606,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-08-22",
+            "through": "2024-09-06",
+            "probability": 0.12269985219152733,
+            "baseline": 0.11144578313253012,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2024-09-06",
+            "through": "2024-09-20",
+            "probability": 0.10698416928156115,
+            "baseline": 0.10979228486646884,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-09-20",
+            "through": "2024-10-04",
+            "probability": 0.08881038255702922,
+            "baseline": 0.10818713450292397,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-10-04",
+            "through": "2024-10-18",
+            "probability": 0.06977565438507721,
+            "baseline": 0.10662824207492795,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-10-18",
+            "through": "2024-11-01",
+            "probability": 0.07150491306865304,
+            "baseline": 0.10511363636363637,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-11-01",
+            "through": "2024-11-15",
+            "probability": 0.08674856271627888,
+            "baseline": 0.10364145658263306,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-11-15",
+            "through": "2024-12-02",
+            "probability": 0.09742081984075382,
+            "baseline": 0.10220994475138122,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-12-02",
+            "through": "2024-12-16",
+            "probability": 0.07446139724377314,
+            "baseline": 0.1008174386920981,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-12-16",
+            "through": "2024-12-31",
+            "probability": 0.058326629559301,
+            "baseline": 0.09946236559139784,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2024-12-31",
+            "through": "2025-01-16",
+            "probability": 0.09479137582500931,
+            "baseline": 0.09814323607427056,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-01-16",
+            "through": "2025-01-31",
+            "probability": 0.09795642840144288,
+            "baseline": 0.0968586387434555,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-01-31",
+            "through": "2025-02-14",
+            "probability": 0.08228396552904038,
+            "baseline": 0.09560723514211886,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-02-14",
+            "through": "2025-03-03",
+            "probability": 0.06478506844623017,
+            "baseline": 0.09438775510204081,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-03-03",
+            "through": "2025-03-17",
+            "probability": 0.08854768973565434,
+            "baseline": 0.09319899244332494,
+            "outcome": 1,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-03-17",
+            "through": "2025-03-31",
+            "probability": 0.12125248141930858,
+            "baseline": 0.10199004975124377,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-03-31",
+            "through": "2025-04-14",
+            "probability": 0.1384474165330656,
+            "baseline": 0.10319410319410319,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-04-14",
+            "through": "2025-04-29",
+            "probability": 0.30795850758724985,
+            "baseline": 0.10922330097087378,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-04-29",
+            "through": "2025-05-13",
+            "probability": 0.29581747013285076,
+            "baseline": 0.11390887290167866,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-05-13",
+            "through": "2025-05-28",
+            "probability": 0.08904052942900642,
+            "baseline": 0.11255924170616113,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-05-28",
+            "through": "2025-06-11",
+            "probability": 0.09476041309372064,
+            "baseline": 0.11124121779859485,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-06-11",
+            "through": "2025-06-26",
+            "probability": 0.08418998157704603,
+            "baseline": 0.1099537037037037,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-06-26",
+            "through": "2025-07-11",
+            "probability": 0.07154870169059334,
+            "baseline": 0.10869565217391304,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-07-11",
+            "through": "2025-07-25",
+            "probability": 0.07913835509415562,
+            "baseline": 0.1074660633484163,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-07-25",
+            "through": "2025-08-08",
+            "probability": 0.06898476832240388,
+            "baseline": 0.10626398210290827,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-08-08",
+            "through": "2025-08-22",
+            "probability": 0.07461374781227781,
+            "baseline": 0.10508849557522124,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-08-22",
+            "through": "2025-09-08",
+            "probability": 0.08222116740578454,
+            "baseline": 0.10393873085339168,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-09-08",
+            "through": "2025-09-22",
+            "probability": 0.07774299775089435,
+            "baseline": 0.10281385281385282,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-09-22",
+            "through": "2025-10-06",
+            "probability": 0.06822252812328919,
+            "baseline": 0.10171306209850108,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-10-06",
+            "through": "2025-10-20",
+            "probability": 0.06642778978704822,
+            "baseline": 0.10063559322033898,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-10-20",
+            "through": "2025-11-03",
+            "probability": 0.08089274065940266,
+            "baseline": 0.09958071278825996,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-11-03",
+            "through": "2025-11-17",
+            "probability": 0.08284640574437545,
+            "baseline": 0.09854771784232365,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-11-17",
+            "through": "2025-12-02",
+            "probability": 0.09968463209567457,
+            "baseline": 0.09753593429158111,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2025-12-02",
+            "through": "2025-12-16",
+            "probability": 0.08195169940649567,
+            "baseline": 0.09654471544715447,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-12-16",
+            "through": "2025-12-31",
+            "probability": 0.08300056655594447,
+            "baseline": 0.09557344064386318,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2025-12-31",
+            "through": "2026-01-15",
+            "probability": 0.08120871442244702,
+            "baseline": 0.0946215139442231,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-01-15",
+            "through": "2026-01-30",
+            "probability": 0.07125791830910887,
+            "baseline": 0.09368836291913216,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-01-30",
+            "through": "2026-02-13",
+            "probability": 0.07479509408211135,
+            "baseline": 0.0927734375,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-02-13",
+            "through": "2026-03-02",
+            "probability": 0.09250984769111296,
+            "baseline": 0.09187620889748549,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-03-02",
+            "through": "2026-03-16",
+            "probability": 0.08254593887894182,
+            "baseline": 0.09099616858237548,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-03-16",
+            "through": "2026-03-30",
+            "probability": 0.09530938576163814,
+            "baseline": 0.09013282732447818,
+            "outcome": 1,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-03-30",
+            "through": "2026-04-14",
+            "probability": 0.13856201021842915,
+            "baseline": 0.08928571428571429,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-04-14",
+            "through": "2026-04-28",
+            "probability": 0.06767539179254287,
+            "baseline": 0.09031657355679702,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-04-28",
+            "through": "2026-05-12",
+            "probability": 0.058506775371987035,
+            "baseline": 0.08948339483394833,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-05-12",
+            "through": "2026-05-27",
+            "probability": 0.05400845979710956,
+            "baseline": 0.0886654478976234,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-05-27",
+            "through": "2026-06-10",
+            "probability": 0.053279136013115014,
+            "baseline": 0.08786231884057971,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-06-10",
+            "through": "2026-06-25",
+            "probability": 0.09467928725999726,
+            "baseline": 0.08707360861759425,
+            "outcome": 0,
+            "lower_risk": false
+          },
+          {
+            "date": "2026-06-25",
+            "through": "2026-07-10",
+            "probability": 0.08455818462976544,
+            "baseline": 0.08629893238434164,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-07-10",
+            "through": "2026-07-24",
+            "probability": 0.06399398338775043,
+            "baseline": 0.0855379188712522,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-07-24",
+            "through": "2026-08-07",
+            "probability": 0.0770092437732464,
+            "baseline": 0.08479020979020979,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-08-07",
+            "through": "2026-08-21",
+            "probability": 0.06013511463207413,
+            "baseline": 0.08405545927209705,
+            "outcome": 0,
+            "lower_risk": true
+          },
+          {
+            "date": "2026-08-21",
+            "through": "2026-09-04",
+            "probability": 0.0722706389165985,
+            "baseline": 0.08333333333333333,
+            "outcome": 0,
+            "lower_risk": true
+          }
+        ]
+      }
+    }
+  }
+}

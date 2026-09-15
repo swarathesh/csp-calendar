@@ -9,6 +9,7 @@ import yfinance as yf
 from bs4 import BeautifulSoup
 from icalendar import Calendar
 from extras import chain_rows, fed_projections, analyst_targets
+from signals import risk_signal
 from model import downside, relevant, timing, sessions, choose_put, last_completed_session
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -163,6 +164,12 @@ def analyse(symbol, events, sources, config):
                     status="INCOMPLETE CALENDAR" if missing else status,
                     blockers=[e["title"] for e in near],missing_sources=missing,
                     chart=[round(float(x),2) for x in complete.tail(60)])
+        try:
+            if list(complete.index.date) != sessions(complete.index[0].date(), asof):
+                raise ValueError("Price history has missing market sessions")
+            item["ml_signal"] = risk_signal(complete.to_numpy(), complete.index.date)
+        except Exception:
+            item["ml_signal"] = {"status": "SIGNAL UNAVAILABLE", "usable": False}
         expiries=[date.fromisoformat(x) for x in ticker.options]
         expiries=[x for x in expiries if config["min_dte"]<=(x-entry).days<=config["max_dte"]]
         expiries=sorted(expiries,key=lambda d:abs((d-entry).days-config["target_dte"]))[:3]

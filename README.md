@@ -76,3 +76,25 @@ Analyst targets are retrieved through yfinance for watchlist instruments and sel
 ## Calendar filters and export
 
 The event calendar starts at today in Eastern time. Combine the inclusive From/Through dates with ticker/event search and event type; clear From to include older rows still present in the snapshot. Reset filters returns to upcoming events. The result count reflects all active filters. Export CSV downloads exactly those rows, including source URLs and cached verification dates. Export is disabled for empty results or an inverted date range. Upcoming totals and the next macro catalyst exclude past dates even when the snapshot is stale; same-day events remain visible because release times may be unconfirmed.
+
+## Experimental ML downside signal
+
+Each CSP card now includes a price-risk experiment with an expandable evidence table. It estimates whether any adjusted close in the next **10 trading sessions** will fall at least **5%** below the reference close. It is instrument-wide; it does not estimate strike breach, assignment, or the return of a specific option.
+
+The fixed model is L2 logistic regression with six trailing price features: 5/20/60-session returns, 20-session volatility, distance from the 60-session average, and drawdown from the 60-session high. Five years of daily observations are modest for this task; a small regularized classifier keeps the experiment inspectable. No model selection or parameter tuning uses the evaluation results.
+
+Evaluation uses expanding chronological training sets, at least 504 examples, and a purge so every training outcome ends strictly before the prediction date. Scaling uses only the training set. Test origins are spaced ten sessions apart so their future outcome windows do not overlap. Training windows overlap, and serial dependence/regime shifts remain possible. All features and outcomes use adjusted daily closes, not intraday lows. Today’s model uses completed sessions only; missing or stale sessions make the signal unavailable.
+
+The comparator predicts the historical event rate from each training set. The evidence panel shows mean squared probability error (Brier score), model error relative to baseline, and observed decline rates in the two groups defined by prediction below/at-or-above the training event rate. Approximate Wilson frequency intervals describe observed outcomes, not certainty in the current estimate; residual market dependence can make them optimistic.
+
+A directional label requires 40 evaluation windows, at least five positive and five negative outcomes, ten windows in each group, lower Brier error than baseline, and a lower observed event rate in the lower-risk group. This is a descriptive screening rule, not proof of significance or future profits. A failed gate displays **NO VALIDATED EDGE**. A passed gate remains experimental. Stale snapshots, unresolved calendar checks, and missing qualifying quotes override ML guidance with **WAIT**. The model never clears a trade automatically.
+
+**Profitability has not been established.** Historical option quotes, transaction costs, fills, early assignment and collateral interest are not in this test. A lower price-risk estimate does not imply favorable option pricing. The fixed horizon does not match every displayed expiration. Prospective paper trading and historical option data are needed to evaluate net CSP returns.
+
+Reproduce the empirical report (network required):
+
+    python scripts/evaluate_signals.py
+
+`reports/ml-evaluation.json` records the collection time, source, input history range/hash, each historical prediction, and outcomes. Provider revisions and the rolling five-year period can change reruns. `reports/ML-EVALUATION.md` summarizes the initial run. Normal scheduled refreshes recompute the dashboard signal without modifying the committed report.
+
+Method references: [chronological splits and gaps](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html), [CSP payoff and risks](https://www.optionseducation.org/strategies/all-strategies/cash-secured-put).

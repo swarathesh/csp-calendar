@@ -99,12 +99,29 @@ document.addEventListener("click",event=>{
  scope.querySelectorAll("[data-event-panel]").forEach(p=>p.hidden=p.dataset.eventPanel!==button.dataset.eventView);
 });
 
+function signalPanel(c){
+ const m=c.ml_signal;
+ if(!m)return '<div class="ml-signal"><h3>Experimental ML risk signal</h3><p>Awaiting a refresh with signal data.</p></div>';
+ const age=(Date.now()-new Date(snapshot.generated_at).getTime())/3600000;
+ const blocked=!(age>=0&&age<=12)||c.status!=="REVIEW QUOTES"||!c.candidates?.some(r=>r.strike!=null);
+ const action=blocked?"WAIT — resolve calendar, data, or quote checks":!m.usable?"NO ML CLEARANCE — evidence gate not met":m.status==="ELEVATED DOWNSIDE RISK"?"CAUTION — model flags higher downside risk":"RESEARCH ONLY — lower relative model risk";
+ const group=(label,g)=>'<tr><td>'+label+'</td><td>'+g.windows+'</td><td>'+g.events+'</td><td>'+numeric(g.rate_pct,1)+'%</td><td>'+(g.interval_pct?g.interval_pct.map(v=>numeric(v,1)+'%').join(' – '):'—')+'</td></tr>';
+ return '<section class="ml-signal" aria-label="Experimental machine learning risk signal"><h3>Experimental ML risk signal</h3><strong>'+esc(action)+'</strong><p>'+esc(m.status)+'</p>'+
+ (m.probability_pct==null?'<p>Signal unavailable or insufficient history. No ML clearance is available.</p>':
+ '<p>Model estimate (not independently calibrated) of a <strong>'+numeric(m.drop_pct)+'% adjusted closing decline within '+m.horizon_sessions+' trading sessions</strong>: '+numeric(m.probability_pct,1)+'%. Training event rate: '+numeric(m.baseline_pct,1)+'%. As of '+day(m.price_date)+'.</p>'+
+ '<details><summary>View historical evidence</summary><p>Walk-forward evaluation: '+day(m.evaluation_from)+' – '+day(m.evaluation_through)+'. Predictions were made using only earlier data. Evaluation outcome windows do not overlap.</p>'+
+ dataTable(['Model grouping','Windows','Declines','Observed rate','Approx. 95% interval'],[group('All windows',m.all),group('Below training event rate',m.lower),group('At / above training event rate',m.higher)])+
+ '<p>Prediction error (Brier score; lower is better): model '+numeric(m.brier,4)+' vs historical-rate baseline '+numeric(m.baseline_brier,4)+'. Relative improvement: '+numeric(m.brier_skill_pct,1)+'%.</p>'+
+ '<p>Fixed L2 logistic regression with past returns, volatility, trend and drawdown. Minimum 504 training examples; refit each evaluation window. A directional label requires at least 40 test windows, five outcomes of each class, ten windows in each group, lower error than baseline, and fewer declines in the lower-risk group. This descriptive gate is not proof of statistical significance. Training labels overlap; market regimes can remain dependent.</p></details>')+
+ '<p class="signal-limit">Price-risk experiment, not a profit forecast, assignment probability, or signal for a particular strike or expiry. Lower relative risk can still be high. Historical option premiums, fees and slippage are absent; CSP profitability has not been backtested. Existing catalyst and quote checks take priority.</p></section>';
+}
+
 function card(c){
  return '<article class="card"><div class="card-top"><div><div class="symbol">'+esc(c.symbol)+'</div><small>Daily close · '+esc(c.price_date||"unavailable")+'</small></div><div class="price">'+money(c.price)+'</div></div>'+spark(c.chart)+'<div class="status">'+esc(c.status)+'</div><p>Reassess: <strong>'+esc(c.reassess_date?day(c.reassess_date):"Pending data")+'</strong></p>'+
  (c.blockers?.length?'<p>Near-term catalysts: '+esc(c.blockers.join(" · "))+'</p>':'')+
  (c.missing_sources?.length?'<p>Calendar sources not live: '+esc(c.missing_sources.join(", "))+'. Timing cannot be cleared.</p>':'')+
  (c.detail?'<p>'+esc(c.detail)+'</p>':'')+
- c.candidates.map((r,i)=>'<div class="candidate"><strong>'+day(r.expiry)+'</strong> <small>· '+r.dte+' DTE today</small><div class="metrics">'+metric("Candidate strike",money(r.strike))+metric("Model ceiling",money(r.model_ceiling))+metric("Collateral",money(r.collateral))+'</div><div class="metrics">'+metric("Indicative credit",money(r.premium))+metric("Breakeven",money(r.breakeven))+metric("Return on collateral",r.return_pct==null?"—":r.return_pct+"%")+'</div><p>Historical tail '+r.tail_pct+'% · worst '+r.worst_pct+'% · '+r.samples+' overlapping windows.</p><p>'+esc(r.quote_note)+'</p>'+(r.last_trade?'<small>Option last traded: '+esc(r.last_trade)+' (not bid time)</small>':'')+expirationEvents(r)+'</div>').join("")+
+ signalPanel(c)+c.candidates.map((r,i)=>'<div class="candidate"><strong>'+day(r.expiry)+'</strong> <small>· '+r.dte+' DTE today</small><div class="metrics">'+metric("Candidate strike",money(r.strike))+metric("Model ceiling",money(r.model_ceiling))+metric("Collateral",money(r.collateral))+'</div><div class="metrics">'+metric("Indicative credit",money(r.premium))+metric("Breakeven",money(r.breakeven))+metric("Return on collateral",r.return_pct==null?"—":r.return_pct+"%")+'</div><p>Historical tail '+r.tail_pct+'% · worst '+r.worst_pct+'% · '+r.samples+' overlapping windows.</p><p>'+esc(r.quote_note)+'</p>'+(r.last_trade?'<small>Option last traded: '+esc(r.last_trade)+' (not bid time)</small>':'')+expirationEvents(r)+'</div>').join("")+
  '<p><a target="_blank" rel="noopener noreferrer" href="'+url(c.source)+'">View options source ↗</a></p></article>';
 }
 
