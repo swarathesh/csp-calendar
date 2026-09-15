@@ -77,24 +77,39 @@ Analyst targets are retrieved through yfinance for watchlist instruments and sel
 
 The event calendar starts at today in Eastern time. Combine the inclusive From/Through dates with ticker/event search and event type; clear From to include older rows still present in the snapshot. Reset filters returns to upcoming events. The result count reflects all active filters. Export CSV downloads exactly those rows, including source URLs and cached verification dates. Export is disabled for empty results or an inverted date range. Upcoming totals and the next macro catalyst exclude past dates even when the snapshot is stale; same-day events remain visible because release times may be unconfirmed.
 
-## Experimental ML downside signal
+## Experimental model comparison and expiry payoffs
 
-Each CSP card now includes a price-risk experiment with an expandable evidence table. It estimates whether any adjusted close in the next **10 trading sessions** will fall at least **5%** below the reference close. It is instrument-wide; it does not estimate strike breach, assignment, or the return of a specific option.
+Each CSP card estimates whether any adjusted close in the next **10 trading sessions** will be at least **5%** below the reference close. The signal uses ten years (`signal_history_years`) to include the 2020 selloff. The strike ceiling still uses the separate five-year `history_years` setting. Models are instrument-wide; they do not predict assignment or a particular option’s return.
 
-The fixed model is L2 logistic regression with six trailing price features: 5/20/60-session returns, 20-session volatility, distance from the 60-session average, and drawdown from the 60-session high. Five years of daily observations are modest for this task; a small regularized classifier keeps the experiment inspectable. No model selection or parameter tuning uses the evaluation results.
+Four fixed methods compete: historical event rate, L2 logistic regression on six trailing price features, volatility-only L2 logistic regression, and a smoothed nearest-neighbor estimate (100 neighbors with a 50-observation event-rate prior). Six-feature inputs are 5/20/60-session returns, 20-session volatility, distance from the 60-session average, and drawdown from its high. Methods and parameters are fixed before running the expanded experiment.
 
-Evaluation uses expanding chronological training sets, at least 504 examples, and a purge so every training outcome ends strictly before the prediction date. Scaling uses only the training set. Test origins are spaced ten sessions apart so their future outcome windows do not overlap. Training windows overlap, and serial dependence/regime shifts remain possible. All features and outcomes use adjusted daily closes, not intraday lows. Today’s model uses completed sessions only; missing or stale sessions make the signal unavailable.
+### Chronological selection and testing
 
-The comparator predicts the historical event rate from each training set. The evidence panel shows mean squared probability error (Brier score), model error relative to baseline, and observed decline rates in the two groups defined by prediction below/at-or-above the training event rate. Approximate Wilson frequency intervals describe observed outcomes, not certainty in the current estimate; residual market dependence can make them optimistic.
+Training expands from at least 504 examples; all training outcomes must end strictly before each prediction. Scaling uses training data only. Ten-session evaluation outcome windows do not overlap. At each historical prediction, choose the method with the lowest Brier error on up to 40 earlier completed prediction windows; at least 20 are required. The selected method is then scored on the next outcome. The outer score evaluates this selection process, not whichever method looks best afterward. Ties favor the baseline. Training windows overlap; market regimes may remain dependent.
 
-A directional label requires 40 evaluation windows, at least five positive and five negative outcomes, ten windows in each group, lower Brier error than baseline, and a lower observed event rate in the lower-risk group. This is a descriptive screening rule, not proof of significance or future profits. A failed gate displays **NO VALIDATED EDGE**. A passed gate remains experimental. Stale snapshots, unresolved calendar checks, and missing qualifying quotes override ML guidance with **WAIT**. The model never clears a trade automatically.
+The evidence gate requires 40 outer windows, five examples in each outcome class, ten windows in each risk group, lower selected-model error than baseline, fewer declines in the lower-risk group, and an approximate 95% moving-block-bootstrap interval for model-minus-baseline error entirely below zero (2,000 resamples; blocks of five outcome windows). Wilson group-frequency intervals describe sample rates, not model calibration. Both interval methods can be optimistic under persistent dependence or structural change.
 
-**Profitability has not been established.** Historical option quotes, transaction costs, fills, early assignment and collateral interest are not in this test. A lower price-risk estimate does not imply favorable option pricing. The fixed horizon does not match every displayed expiration. Prospective paper trading and historical option data are needed to evaluate net CSP returns.
+**These are retrospective tests.** The recent portion of this history was already examined in version 1, so the expanded experiment is not a fresh untouched holdout. No extra model/parameter search was performed after inspecting the expanded results. A passed gate would still require prospective validation. Failed gates display **NO VALIDATED EDGE**, with explicit reasons. Stale snapshots, unresolved calendars and missing qualifying quotes override model guidance with **WAIT**. There is no automatic entry clearance.
 
-Reproduce the empirical report (network required):
+### Does the bid cover expiry losses?
+
+For each qualifying option, the payoff panel applies non-overlapping historical terminal returns of its actual expiry horizon to today’s reference price, strike and bid. For one regular 100-share put:
+
+    net credit = (bid - slippage per share) × 100 - total fees
+    terminal price = current reference price × (1 + historical terminal return)
+    net expiry P/L = net credit - max(strike - terminal price, 0) × 100
+
+The panel shows mean/median P/L, loss frequency, a block-bootstrap interval for the mean, average loss in the worst 5% of scenarios, worst observed P/L, and the bid needed to cover the mean historical intrinsic loss plus costs. At least 30 non-overlapping windows and 252 observations are required. Stress tests include underlying declines of 10%, 20%, 40%, 60% and 100%; the zero-price case shows the contract’s maximum loss under the stated costs. Negative mean scenarios trigger a caution; a mean interval spanning a loss is labeled uncertain.
+
+**This is not an options backtest or an expected-profit estimate.** It holds today’s quote and strike fixed across adjusted historical return scenarios. Historical option premiums were unavailable. It marks assignment losses at expiration, rather than assuming eventual recovery. Early assignment, changing option prices before expiry, taxes, collateral interest and intraday liquidation are excluded. The strike screen also uses this history, so the payoff panel is descriptive, not independent validation of that screen. Scenarios cannot establish profitability or cover every future crash.
+
+Cost assumptions are explicit and editable in `config.json`: `scenario_costs.fee_per_contract` (default $2 total) and `scenario_costs.slippage_per_share` (default $0.01 below bid). These are scenario assumptions, not broker fee claims. Cost errors, missing sessions or unavailable prices make the panel unavailable. Signal horizon and option expiry horizon are displayed separately.
+
+### Reproducing the evidence
 
     python scripts/evaluate_signals.py
+    python scripts/refresh.py
 
-`reports/ml-evaluation.json` records the collection time, source, input history range/hash, each historical prediction, and outcomes. Provider revisions and the rolling five-year period can change reruns. `reports/ML-EVALUATION.md` summarizes the initial run. Normal scheduled refreshes recompute the dashboard signal without modifying the committed report.
+The first command writes `reports/ml-evaluation.json` with timestamps, history ranges/input hashes, selection warmup records, and every outer prediction/outcome. The second recomputes current option scenarios in `site/data/latest.json`. Provider revisions and rolling windows change reruns; current option bids are delayed and may change. `reports/ML-EVALUATION.md` summarizes the expanded run; `reports/payoff-evaluation.json` preserves the reviewed option-scenario snapshot, including collection time and quote assumptions. Normal scheduled refreshes recompute signals and scenarios without rewriting committed reports.
 
-Method references: [chronological splits and gaps](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html), [CSP payoff and risks](https://www.optionseducation.org/strategies/all-strategies/cash-secured-put).
+References: [chronological splits and gaps](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html), [model-selection bias](https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html), [CSP payoff and risks](https://www.optionseducation.org/strategies/all-strategies/cash-secured-put).

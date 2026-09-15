@@ -35,5 +35,10 @@
   "max_dte": 28,
   "target_dte": 14,
   "history_years": 5,
-  "tail_quantile": 0.05
+  "tail_quantile": 0.05,
+  "scenario_costs": {
+    "fee_per_contract": 2.0,
+    "slippage_per_share": 0.01
+  },
+  "signal_history_years": 10
 }

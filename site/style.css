@@ -7,3 +7,7 @@
 
 .ml-signal{margin:20px 0;padding:16px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}.ml-signal h3{margin:0 0 10px}.ml-signal>strong{display:block;color:var(--amber);font-size:12px}.ml-signal summary{cursor:pointer;color:var(--accent);font-size:12px}.ml-signal td,.ml-signal th{padding:9px;font-size:10px}.ml-signal .signal-limit{margin-bottom:0;font-size:11px}
 .card,.ml-signal{min-width:0}@media(max-width:760px){.cards{grid-template-columns:minmax(0,1fr)}}
+
+.payoff-panel{margin:18px 0;padding:12px;border:1px solid var(--line);border-radius:6px}.payoff-panel summary{cursor:pointer;color:var(--accent);font-size:12px}.payoff-panel td,.payoff-panel th{font-size:11px;padding:10px}.payoff-panel .metrics{grid-template-columns:repeat(auto-fit,minmax(100px,1fr))}
+
+.card .payoff-verdict{color:var(--amber);font-size:11px;margin-top:16px}

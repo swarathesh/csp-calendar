@@ -12,12 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main():
     config = json.loads((ROOT/'config.json').read_text())
+    history_years = config.get('signal_history_years', config['history_years'])
     now = datetime.now(timezone.utc)
     expected = last_completed_session(now)
     report = {"collected_at": now.isoformat(), "source": "Yahoo Finance via yfinance; adjusted completed daily closes",
-              "history_years": config['history_years'], "symbols": {}}
+              "history_years": history_years, "symbols": {}}
     for symbol in config['watchlist']:
-        hist = yf.Ticker(symbol).history(period=str(config['history_years'])+'y', auto_adjust=True, timeout=20)
+        hist = yf.Ticker(symbol).history(period=str(history_years)+'y', auto_adjust=True, timeout=20)
         closes = hist[[d <= expected for d in hist.index.date]]['Close'].dropna()
         if closes.empty or closes.index[-1].date() != expected:
             raise ValueError(symbol+': missing or stale price history')
