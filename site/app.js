@@ -23,12 +23,67 @@ function spark(values){
  return '<svg class="spark" viewBox="0 0 400 55" role="img" aria-label="Last 60 completed daily closes"><polyline points="'+points+'" fill="none" stroke="#8ce6c6" stroke-width="2"/></svg>';
 }
 function metric(label,value){return'<div><small>'+esc(label)+'</small><span>'+esc(value)+'</span></div>'}
+
+function candidateEvents(candidate){
+ return (candidate.events||[]).flatMap(e=>typeof e==="string"
+   ? (snapshot?.events||[]).filter(x=>x.title===e&&x.date<=candidate.expiry)
+   : [e]).sort((a,b)=>a.date.localeCompare(b.date)||a.title.localeCompare(b.title));
+}
+function eventTable(events){
+ if(!events.length)return '<p>No dated events reported in monitored sources for this expiration.</p>';
+ return '<div class="table-wrap"><table class="expiry-event-table"><thead><tr><th scope="col">Date</th><th scope="col">Event</th><th scope="col">Time / ET</th></tr></thead><tbody>'+
+ events.map(e=>'<tr><td><time datetime="'+esc(e.date)+'">'+day(e.date)+'</time></td><td>'+esc(e.title)+
+ (e.source?'<small><a href="'+url(e.source)+'" target="_blank" rel="noopener noreferrer">Verify source ↗</a></small>':'')+
+ (e.verified_at?'<small>Cached · verified '+esc(e.verified_at)+'</small>':'')+
+ '</td><td>'+esc(e.time||"Time not supplied")+'</td></tr>').join("")+'</tbody></table></div>';
+}
+function eventCalendar(events,expiry){
+ const start=events.length?events[0].date:expiry;
+ const startDate=new Date(start+"T12:00:00Z"),endDate=new Date(expiry+"T12:00:00Z");
+ let html='<p class="calendar-legend"><span>● Event date</span><span>◇ Option expiration</span></p>';
+ for(let month=new Date(Date.UTC(startDate.getUTCFullYear(),startDate.getUTCMonth(),1,12));month<=endDate;month.setUTCMonth(month.getUTCMonth()+1)){
+  const year=month.getUTCFullYear(),m=month.getUTCMonth();
+  const label=month.toLocaleDateString("en-US",{month:"long",year:"numeric",timeZone:"UTC"});
+  const count=new Date(Date.UTC(year,m+1,0)).getUTCDate();
+  const offset=(month.getUTCDay()+6)%7;
+  html+='<div class="expiry-month"><h4>'+label+'</h4><div class="month-scroll"><table class="month-grid"><caption class="sr-only">'+label+' events and option expiration</caption><thead><tr>'+["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d=>'<th scope="col">'+d+'</th>').join("")+'</tr></thead><tbody>';
+  for(let cell=0;cell<Math.ceil((offset+count)/7)*7;cell++){
+   if(cell%7===0)html+='<tr>';
+   const n=cell-offset+1;
+   if(n<1||n>count){html+='<td class="outside-month"></td>';}
+   else{
+    const iso=year+"-"+String(m+1).padStart(2,"0")+"-"+String(n).padStart(2,"0");
+    const daily=events.filter(e=>e.date===iso);
+    html+='<td class="'+(daily.length?'has-event ':'')+(iso===expiry?'is-expiry':'')+'"><time datetime="'+iso+'">'+n+'</time>'+
+    daily.map(e=>'<div class="calendar-event"><strong>'+esc(e.title)+'</strong><small>'+esc(e.time||"Time not supplied")+'</small>'+(e.verified_at?'<small>Cached date</small>':'')+'</div>').join("")+
+    (iso===expiry?'<div class="expiration-label">◇ Expiration</div>':'')+'</td>';
+   }
+   if(cell%7===6)html+='</tr>';
+  }
+  html+='</tbody></table></div></div>';
+ }
+ return html;
+}
+function expirationEvents(candidate){
+ const events=candidateEvents(candidate);
+ return '<details class="expiry-events" open><summary>Events through expiration ('+events.length+')</summary>'+
+ '<div class="event-switch" role="group" aria-label="Events view"><button type="button" data-event-view="table" aria-pressed="true">Table</button><button type="button" data-event-view="calendar" aria-pressed="false">Calendar</button></div>'+
+ '<div data-event-panel="table">'+eventTable(events)+'</div><div data-event-panel="calendar" hidden>'+eventCalendar(events,candidate.expiry)+'</div></details>';
+}
+document.addEventListener("click",event=>{
+ const button=event.target.closest("[data-event-view]");
+ if(!button)return;
+ const scope=button.closest(".expiry-events");
+ scope.querySelectorAll("[data-event-view]").forEach(b=>b.setAttribute("aria-pressed",String(b===button)));
+ scope.querySelectorAll("[data-event-panel]").forEach(p=>p.hidden=p.dataset.eventPanel!==button.dataset.eventView);
+});
+
 function card(c){
  return '<article class="card"><div class="card-top"><div><div class="symbol">'+esc(c.symbol)+'</div><small>Daily close · '+esc(c.price_date||"unavailable")+'</small></div><div class="price">'+money(c.price)+'</div></div>'+spark(c.chart)+'<div class="status">'+esc(c.status)+'</div><p>Reassess: <strong>'+esc(c.reassess_date?day(c.reassess_date):"Pending data")+'</strong></p>'+
  (c.blockers?.length?'<p>Near-term catalysts: '+esc(c.blockers.join(" · "))+'</p>':'')+
  (c.missing_sources?.length?'<p>Calendar sources not live: '+esc(c.missing_sources.join(", "))+'. Timing cannot be cleared.</p>':'')+
  (c.detail?'<p>'+esc(c.detail)+'</p>':'')+
- c.candidates.map((r,i)=>'<div class="candidate"><strong>'+day(r.expiry)+'</strong> <small>· '+r.dte+' DTE today</small><div class="metrics">'+metric("Candidate strike",money(r.strike))+metric("Model ceiling",money(r.model_ceiling))+metric("Collateral",money(r.collateral))+'</div><div class="metrics">'+metric("Indicative credit",money(r.premium))+metric("Breakeven",money(r.breakeven))+metric("Return on collateral",r.return_pct==null?"—":r.return_pct+"%")+'</div><p>Historical tail '+r.tail_pct+'% · worst '+r.worst_pct+'% · '+r.samples+' overlapping windows.</p><p>'+esc(r.quote_note)+'</p>'+(r.last_trade?'<small>Option last traded: '+esc(r.last_trade)+' (not bid time)</small>':'')+'<details><summary>Events through expiration ('+r.events.length+')</summary><p>'+esc(r.events.join(" · ")||"None reported in monitored sources")+'</p></details></div>').join("")+
+ c.candidates.map((r,i)=>'<div class="candidate"><strong>'+day(r.expiry)+'</strong> <small>· '+r.dte+' DTE today</small><div class="metrics">'+metric("Candidate strike",money(r.strike))+metric("Model ceiling",money(r.model_ceiling))+metric("Collateral",money(r.collateral))+'</div><div class="metrics">'+metric("Indicative credit",money(r.premium))+metric("Breakeven",money(r.breakeven))+metric("Return on collateral",r.return_pct==null?"—":r.return_pct+"%")+'</div><p>Historical tail '+r.tail_pct+'% · worst '+r.worst_pct+'% · '+r.samples+' overlapping windows.</p><p>'+esc(r.quote_note)+'</p>'+(r.last_trade?'<small>Option last traded: '+esc(r.last_trade)+' (not bid time)</small>':'')+expirationEvents(r)+'</div>').join("")+
  '<p><a target="_blank" rel="noopener noreferrer" href="'+url(c.source)+'">View options source ↗</a></p></article>';
 }
 async function load(){

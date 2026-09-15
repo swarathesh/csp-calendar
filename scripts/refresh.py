@@ -173,7 +173,7 @@ def analyse(symbol, events, sources, config):
             put=choose_put(chain.to_dict("records"),spot,ceiling)
             row={"expiry":str(expiry),"dte":(expiry-TODAY).days,"model_ceiling":round(ceiling,2),
                  "tail_pct":round(risk["tail"]*100,2),"worst_pct":round(risk["worst"]*100,2),
-                 "samples":risk["samples"],"events":[e["title"] for e in ev if e["date"]<=str(expiry)],
+                 "samples":risk["samples"],"events":[e for e in ev if e["date"]<=str(expiry)],
                  "strike":None,"quote_note":"No qualifying regular put with usable bid/ask and open interest"}
             if put is not None:
                 strike,bid,ask=map(float,[put["strike"],put["bid"],put["ask"]])
