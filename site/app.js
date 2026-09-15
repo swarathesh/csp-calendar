@@ -10,12 +10,33 @@ document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()
 }));
 function renderEvents(){
  if(!snapshot)return;
- const search=$("search").value.toLowerCase(),kind=$("kind").value;
- const rows=snapshot.events.filter(e=>(!kind||e.kind===kind)&&[e.title,e.symbol,e.date].join(" ").toLowerCase().includes(search));
+ const rows=CalendarTools.filterEvents(snapshot.events,{
+  search:$("search").value,kind:$("kind").value,
+  from:$("date-from").value,to:$("date-to").value
+ });
+ const invalid=$("date-from").value && $("date-to").value && $("date-from").value>$("date-to").value;
+ $("event-count").textContent=invalid?"Choose an end date on or after the start date.":rows.length+" of "+snapshot.events.length+" reported events";
+ $("export-events").disabled=!rows.length;
  $("events").innerHTML=rows.map(e=>'<tr><td>'+day(e.date)+'<small>'+esc(e.time)+(e.verified_at?' · cached, verified '+esc(e.verified_at):'')+'</small></td><td>'+esc(e.title)+(e.symbol?'<small>'+esc(e.symbol)+'</small>':'')+'</td><td><span class="tag '+(e.kind==="Macro"?'macro':'')+'">'+esc(e.kind)+'</span></td><td><a target="_blank" rel="noopener noreferrer" href="'+url(e.source)+'">Verify ↗</a></td></tr>').join("");
  $("empty").hidden=!!rows.length;
 }
 $("search").addEventListener("input",renderEvents);$("kind").addEventListener("change",renderEvents);
+["date-from","date-to"].forEach(id=>$(id).addEventListener("change",renderEvents));
+$("reset-events").addEventListener("click",()=>{
+ $("search").value="";$("kind").value="";
+ $("date-from").value=CalendarTools.easternToday();$("date-to").value="";
+ renderEvents();
+});
+$("export-events").addEventListener("click",()=>{
+ if(!snapshot)return;
+ const rows=CalendarTools.filterEvents(snapshot.events,{search:$("search").value,kind:$("kind").value,from:$("date-from").value,to:$("date-to").value});
+ if(!rows.length)return;
+ const link=document.createElement("a");
+ const objectUrl=URL.createObjectURL(new Blob(["\ufeff"+CalendarTools.eventsCsv(rows)],{type:"text/csv;charset=utf-8"}));
+ link.href=objectUrl;link.download="catalyst-events.csv";document.body.append(link);link.click();link.remove();
+ setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);
+});
+$("date-from").value=CalendarTools.easternToday();
 function spark(values){
  if(!values||values.length<2)return"";
  const lo=Math.min(...values),range=Math.max(...values)-lo||1;
@@ -129,8 +150,9 @@ async function load(){
   const age=(Date.now()-new Date(snapshot.generated_at).getTime())/3600000;
   const failed=snapshot.sources.filter(s=>s.status!=="ok");
   $("updated").textContent=new Date(snapshot.generated_at).toLocaleString("en-US",{timeZone:"America/New_York"})+" ET";
-  $("count").textContent=snapshot.events.length;
-  const next=snapshot.events.find(e=>e.kind==="Macro");
+  const upcoming=CalendarTools.filterEvents(snapshot.events,{from:CalendarTools.easternToday()});
+  $("count").textContent=upcoming.length;
+  const next=upcoming.find(e=>e.kind==="Macro");
   $("next").textContent=next?day(next.date)+" · "+next.title:"No verified upcoming macro data";
   $("coverage").textContent="Reported events through "+day(snapshot.through)+" • provider coverage may be incomplete";
   $("banner").textContent=age>12?"STALE SNAPSHOT — last refresh was over 12 hours ago. Do not use these targets without refreshing.":failed.length?"PARTIAL COVERAGE — "+failed.map(s=>s.name.toUpperCase()).join(", ")+" not live (cached or unavailable). CSP dates and strikes require manual verification.":"Sources refreshed. Quotes are delayed; verify dates, liquidity, and current prices before trading.";

@@ -46,6 +46,7 @@ Requires Python 3.12 and Node.js (for the syntax check).
 
     pip install -r requirements.txt
     python -m unittest discover -s tests -v
+    node --test tests/test_calendar.cjs
     python scripts/refresh.py
     python -m http.server 8000 --directory site
 
@@ -71,3 +72,7 @@ The fourth dashboard tab exposes full call/put chains for the three expirations 
 The Fed forecast section discovers the latest accessible Summary of Economic Projections linked from the official FOMC calendar and displays the first four (median) federal funds rate projections and publication date. These are annual/longer-run participant projections, not next-meeting probabilities. CME FedWatch is linked for market-implied meeting probabilities; automated CME data ingestion is not implemented.
 
 Analyst targets are retrieved through yfinance for watchlist instruments and selected earnings proxies. Instruments without target coverage are marked unavailable. Constituent targets are not ETF forecasts. These long-horizon forecasts do not alter CSP strike calculations; target-specific publication dates and horizons are not supplied by the endpoint. All additions work without new API keys and fail independently of the calendar/historical screen.
+
+## Calendar filters and export
+
+The event calendar starts at today in Eastern time. Combine the inclusive From/Through dates with ticker/event search and event type; clear From to include older rows still present in the snapshot. Reset filters returns to upcoming events. The result count reflects all active filters. Export CSV downloads exactly those rows, including source URLs and cached verification dates. Export is disabled for empty results or an inverted date range. Upcoming totals and the next macro catalyst exclude past dates even when the snapshot is stale; same-day events remain visible because release times may be unconfirmed.
