@@ -99,7 +99,7 @@ document.addEventListener("click",event=>{
  scope.querySelectorAll("[data-event-panel]").forEach(p=>p.hidden=p.dataset.eventPanel!==button.dataset.eventView);
 });
 
-function signalPanel(c){
+function technicalSignalPanel(c){
  const m=c.ml_signal;
  if(!m)return '<div class="ml-signal"><h3>Experimental ML risk signal</h3><p>Awaiting a refresh with signal data.</p></div>';
  const age=(Date.now()-new Date(snapshot.generated_at).getTime())/3600000;
@@ -132,13 +132,48 @@ function payoffPanel(r){
  '<p>Assumptions: '+money(p.fee_per_contract)+' total fees/contract and '+money(p.slippage_per_share)+'/share below the displayed bid. Collateral interest, taxes, early assignment, intraday liquidation and changing option prices are excluded. Assignment loss is marked at expiry; it is not assumed to disappear by holding the shares.</p><p>Scenario analysis, not a historical options backtest or expected-profit estimate. Uses adjusted historical terminal returns with today’s quote and strike; past option premiums were unavailable. Non-overlapping price windows and approximate block-resampled intervals do not capture every possible crash. Calendar, quote and data checks still apply.</p></details>';
 }
 
+function simpleSignal(c){
+ const m=c.ml_signal;
+ const age=(Date.now()-new Date(snapshot.generated_at).getTime())/3600000;
+ const stale=!(age>=0&&age<=12);
+ const missing=!!c.missing_sources?.length||c.status==='INCOMPLETE CALENDAR';
+ const news=!!c.blockers?.length||c.status==='WAIT / REASSESS';
+ const noQuote=!c.candidates?.some(r=>r.strike!=null);
+ const other=c.status!=='REVIEW QUOTES'&&!missing&&!news&&!stale;
+ const blocked=stale||missing||news||noQuote||other;
+ const title=blocked?'Wait for now':!m?.usable?'No clear answer yet':m.status==='ELEVATED DOWNSIDE RISK'?'Be extra careful':'Worth a closer look';
+ const reasons=[];
+ if(stale)reasons.push('These numbers are old or their update time is unclear. Wait for fresh numbers.');
+ if(news)reasons.push('Important news is coming. It could move the share price quickly.');
+ if(missing)reasons.push('Some news dates are missing or have not been checked recently.');
+ if(noQuote)reasons.push('We do not have a usable option price to show.');
+ if(other&&!noQuote)reasons.push('Some price or option data is missing.');
+ reasons.push(!m?.usable?'The computer has not shown that its guesses are reliable enough to help choose this trade.':m.status==='ELEVATED DOWNSIDE RISK'?'The computer sees a higher chance of a price drop. It can still be wrong.':'The computer sees less danger than usual. You can still lose money.');
+ return '<section class="simple-signal"><h3>'+title+'</h3><ul>'+reasons.map(r=>'<li>'+esc(r)+'</li>').join('')+'</ul>'+
+ (c.reassess_date?'<p><strong>Check again: '+day(c.reassess_date)+'.</strong> This is a day to check, not a promise that trading will be safe.</p>':'')+
+ '<details class="plain-details"><summary>Show the computer’s test details</summary>'+technicalSignalPanel(c)+'</details></section>';
+}
+function simpleCandidate(r){
+ const p=r.payoff_scenarios;
+ const hasCosts=p?.net_credit!=null;
+ const payment=hasCosts?p.net_credit:r.premium;
+ const technical='<div class="metrics">'+metric('Strike price',money(r.strike))+metric('Model ceiling',money(r.model_ceiling))+metric('Collateral',money(r.collateral))+'</div><div class="metrics">'+metric('Credit before costs',money(r.premium))+metric('Breakeven before costs',money(r.breakeven))+metric('Return before costs',r.return_pct==null?'—':r.return_pct+'%')+'</div><p>Historical tail '+r.tail_pct+'% · worst '+r.worst_pct+'% · '+r.samples+' overlapping windows.</p><p>'+esc(r.quote_note)+'</p>'+(r.last_trade?'<small>Option last traded: '+esc(r.last_trade)+' (not bid time)</small>':'')+payoffPanel(r)+expirationEvents(r);
+ if(r.strike==null)return '<section class="candidate"><h3>Ends '+day(r.expiry)+'</h3><p>No usable option price for this date. Check again after the next update.</p><details class="plain-details"><summary>Show the details</summary>'+technical+'</details></section>';
+ const stress=p?.stress?.find(x=>x.underlying_return_pct===-40);
+ const verdict=p?.status==='UNFAVORABLE HISTORICAL SCENARIOS'?'The payment looks too small compared with the losses in our past-price examples.':p?.status==='POSITIVE HISTORICAL SCENARIOS'?'The past-price examples look better, but they do not prove this trade will make money.':'We cannot tell whether this payment is worth the risk.';
+ return '<section class="candidate"><h3>Ends '+day(r.expiry)+'</h3><div class="simple-money">'+metric('Money to set aside',money(r.collateral))+metric(hasCosts?'Payment after assumed costs':'Payment before costs',money(payment))+'</div>'+
+ '<p><strong>The deal:</strong> You collect a payment for promising to buy 100 shares at '+money(r.strike)+' each. That is '+money(r.collateral)+' in total.</p>'+
+ '<p><strong>The catch:</strong> You may have to buy those shares even if their price falls far below '+money(r.strike)+'. You can be asked to buy before this end date, too.</p>'+
+ (stress?'<p class="simple-risk"><strong>If shares fall 40% by this date:</strong> this example shows a '+(stress.net_pnl<0?'loss of ':'gain of ')+money(Math.abs(stress.net_pnl))+', after the assumed costs.</p>':'')+
+ '<p><strong>If the shares become worthless:</strong> you could lose '+money(r.collateral-payment)+(hasCosts?' under these cost assumptions.':' plus trading costs.')+'</p>'+
+ '<p>'+verdict+'</p><p class="simple-note">'+(hasCosts?'The payment starts at '+money(r.premium)+' before costs. We subtract '+money(p.fee_per_contract)+' in assumed fees and '+money(p.slippage_per_share*100)+' for a slightly worse price.':'The payment is an estimate and does not include trading costs.')+' Check the live price and fees in your broker. The payment is not guaranteed profit.</p>'+
+ '<details class="plain-details"><summary>Show the numbers and news dates</summary>'+technical+'</details></section>';
+}
 function card(c){
- return '<article class="card"><div class="card-top"><div><div class="symbol">'+esc(c.symbol)+'</div><small>Daily close · '+esc(c.price_date||"unavailable")+'</small></div><div class="price">'+money(c.price)+'</div></div>'+spark(c.chart)+'<div class="status">'+esc(c.status)+'</div><p>Reassess: <strong>'+esc(c.reassess_date?day(c.reassess_date):"Pending data")+'</strong></p>'+
- (c.blockers?.length?'<p>Near-term catalysts: '+esc(c.blockers.join(" · "))+'</p>':'')+
- (c.missing_sources?.length?'<p>Calendar sources not live: '+esc(c.missing_sources.join(", "))+'. Timing cannot be cleared.</p>':'')+
- (c.detail?'<p>'+esc(c.detail)+'</p>':'')+
- signalPanel(c)+c.candidates.map((r,i)=>'<div class="candidate"><strong>'+day(r.expiry)+'</strong> <small>· '+r.dte+' DTE today</small><div class="metrics">'+metric("Candidate strike",money(r.strike))+metric("Model ceiling",money(r.model_ceiling))+metric("Collateral",money(r.collateral))+'</div><div class="metrics">'+metric("Indicative credit",money(r.premium))+metric("Breakeven",money(r.breakeven))+metric("Return on collateral",r.return_pct==null?"—":r.return_pct+"%")+'</div><p>Historical tail '+r.tail_pct+'% · worst '+r.worst_pct+'% · '+r.samples+' overlapping windows.</p><p>'+esc(r.quote_note)+'</p>'+(r.last_trade?'<small>Option last traded: '+esc(r.last_trade)+' (not bid time)</small>':'')+payoffPanel(r)+expirationEvents(r)+'</div>').join("")+
- '<p><a target="_blank" rel="noopener noreferrer" href="'+url(c.source)+'">View options source ↗</a></p></article>';
+ return '<article class="card"><div class="card-top"><div><div class="symbol">'+esc(c.symbol)+'</div><small>Last closing price · '+esc(c.price_date||'not available')+'</small></div><div class="price">'+money(c.price)+'</div></div>'+
+ (c.symbol==='SOXL'?'<p class="simple-note">SOXL is a fund whose price can swing very sharply. A small payment does not protect you from a big drop.</p>':'')+
+ simpleSignal(c)+c.candidates.map(simpleCandidate).join('')+
+ '<p><a target="_blank" rel="noopener noreferrer" href="'+url(c.source)+'">Check option prices ↗</a></p></article>';
 }
 
 function numeric(v,digits=2){return v==null?"—":Number(v).toLocaleString("en-US",{maximumFractionDigits:digits});}
@@ -188,7 +223,7 @@ async function load(){
   const next=upcoming.find(e=>e.kind==="Macro");
   $("next").textContent=next?day(next.date)+" · "+next.title:"No verified upcoming macro data";
   $("coverage").textContent="Reported events through "+day(snapshot.through)+" • provider coverage may be incomplete";
-  $("banner").textContent=age>12?"STALE SNAPSHOT — last refresh was over 12 hours ago. Do not use these targets without refreshing.":failed.length?"PARTIAL COVERAGE — "+failed.map(s=>s.name.toUpperCase()).join(", ")+" not live (cached or unavailable). CSP dates and strikes require manual verification.":"Sources refreshed. Quotes are delayed; verify dates, liquidity, and current prices before trading.";
+  $("banner").textContent=age>12?"These numbers are more than 12 hours old. Wait for a fresh update before using them.":failed.length?"Some news dates are missing or have not been checked recently. Wait for fresh information and check the original sources.":"Sources refreshed. Quotes are delayed; verify dates, liquidity, and current prices before trading.";
   $("banner").classList.toggle("ok",age<=12&&!failed.length);
   if(age>12)snapshot.watchlist.forEach(c=>c.status="STALE — REFRESH BEFORE USE");
   $("cards").innerHTML=snapshot.watchlist.map(card).join("");
