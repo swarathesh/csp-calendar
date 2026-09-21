@@ -9,9 +9,9 @@ let chartPoints=[],selectedPoint=null;
 const modeStyles=document.createElement("link");modeStyles.rel="stylesheet";modeStyles.href="growth-modes.css";document.head.append(modeStyles);
 const modePicker=document.createElement("fieldset");modePicker.className="sample-mode";modePicker.innerHTML='<legend>How should years be chosen?</legend><div class="mode-switch"><button type="button" data-sample-mode="consecutive" aria-pressed="true">Consecutive period</button><button type="button" data-sample-mode="random" aria-pressed="false">Random years</button></div><p class="mode-explanation" id="mode-explanation">Keeps the market’s real chronological order.</p>';
 document.querySelector(".growth-controls h2").after(modePicker);
-function pathFor(points,width=900,height=330){
- const values=points.map(p=>p.balance),max=Math.max(...values,1),pad=12;
- return points.map((p,i)=>{const x=pad+i/(points.length-1||1)*(width-pad*2);const y=height-pad-(p.balance/max)*(height-pad*2);return `${i?"L":"M"}${x.toFixed(1)} ${y.toFixed(1)}`;}).join(" ");
+function pathFor(points,valueFor,maxOverride,width=900,height=330){
+ const values=points.map(valueFor),max=maxOverride??Math.max(...values,1),pad=12;
+ return points.map((point,i)=>{const x=pad+i/(points.length-1||1)*(width-pad*2);const y=height-pad-(valueFor(point)/max)*(height-pad*2);return `${i?"L":"M"}${x.toFixed(1)} ${y.toFixed(1)}`;}).join(" ");
 }
 function chartPosition(index){
  const width=900,height=330,pad=12,values=chartPoints.map(point=>point.balance),max=Math.max(...values,1);
@@ -25,6 +25,8 @@ function showPoint(index){
  $("chart-dot").setAttribute("cx",position.x);$("chart-dot").setAttribute("cy",position.y);$("chart-dot").hidden=false;
  const label=point.year?`${point.year}`:"Start";
  $("chart-readout").innerHTML=`<strong>${label}: ${currency(point.balance)}</strong><span>You have added ${currency(point.totalContributed)} so far.</span>`;
+ $("tooltip-time").textContent=label;$("tooltip-balance").textContent=currency(point.balance);$("tooltip-contributed").textContent=`Money added: ${currency(point.totalContributed)}`;
+ const tooltip=$("chart-tooltip");tooltip.style.left=`${Math.max(14,Math.min(86,position.x/900*100))}%`;tooltip.style.top=`${Math.max(24,position.y/330*100)}%`;tooltip.hidden=false;
 }
 function pointFromPointer(event){
  const box=$("growth-chart-svg").getBoundingClientRect();
@@ -36,7 +38,7 @@ function render(){
  const period=sampleMode==="random"?randomPeriod:SP_RETURNS.slice(startIndex,startIndex+years);const result=GrowthTools.simulate(period,$("capital").value,$("monthly").value);chartPoints=result.points;const first=period[0],last=period.at(-1);
  $("years-value").textContent=`${years} ${years===1?"year":"years"}`;$("period").textContent=sampleMode==="random"?`${years} random ${years===1?"year":"years"}`:`${first.year}–${last.year}`;$("ending-value").textContent=currency(result.balance);$("contributed").textContent=currency(result.totalContributed);$("market-gain").textContent=currency(result.gain);
  const annualized=result.totalContributed?Math.pow(result.balance/result.totalContributed,1/period.length)-1:null;$("growth-rate").textContent=annualized==null?"—":`${(annualized*100).toFixed(1)}%`;
- $("growth-line").setAttribute("d",pathFor(result.points));$("area-line").setAttribute("d",`${pathFor(result.points)} L888 318 L12 318 Z`);$("chart-start").textContent=sampleMode==="random"?"Draw 1":first.year;$("chart-end").textContent=sampleMode==="random"?`Draw ${years}`:last.year;$("chart-max").textContent=currency(Math.max(...result.points.map(p=>p.balance)));
+ const chartMax=Math.max(...result.points.map(point=>point.balance),1),valuePath=pathFor(result.points,point=>point.balance,chartMax);$("growth-line").setAttribute("d",valuePath);$("area-line").setAttribute("d",`${valuePath} L888 318 L12 318 Z`);$("contribution-line").setAttribute("d",pathFor(result.points,point=>point.totalContributed,chartMax));$("chart-start").textContent=sampleMode==="random"?"Draw 1":first.year;$("chart-end").textContent=sampleMode==="random"?`Draw ${years}`:last.year;$("chart-max").textContent=currency(chartMax);
  $("return-rows").innerHTML=period.map((r,i)=>`<tr><td>${sampleMode==="random"?`<span class="sequence-index">${i+1}</span>`:""}${r.year}</td><td class="${r.return<0?'negative':'positive'}">${r.return<0?'':'+'}${(r.return*100).toFixed(2)}%</td><td>${currency(result.points[i+1].balance)}</td></tr>`).join("");
  if(selectedPoint!==null)showPoint(Math.min(selectedPoint,chartPoints.length-1));
 }
@@ -45,6 +47,7 @@ modePicker.addEventListener("click",event=>{const button=event.target.closest("[
 $("years").addEventListener("input",()=>{if(sampleMode==="random")randomPeriod=GrowthTools.sampleYears(SP_RETURNS,$("years").value);render();});$("capital").addEventListener("input",render);$("monthly").addEventListener("input",render);$("random-period").addEventListener("click",randomize);render();
 const chart=$("growth-chart-svg");
 chart.addEventListener("pointerdown",event=>{chart.setPointerCapture(event.pointerId);pointFromPointer(event);});
-chart.addEventListener("pointermove",event=>{if(chart.hasPointerCapture(event.pointerId))pointFromPointer(event);});
+chart.addEventListener("pointermove",event=>{pointFromPointer(event);});
 chart.addEventListener("pointerup",event=>{if(chart.hasPointerCapture(event.pointerId))chart.releasePointerCapture(event.pointerId);});
+chart.addEventListener("pointerleave",()=>{if(selectedPoint===null)$("chart-tooltip").hidden=true;});
 chart.addEventListener("keydown",event=>{if(!chartPoints.length)return;const current=selectedPoint??0;if(event.key==="ArrowLeft"||event.key==="ArrowDown"){event.preventDefault();showPoint(current-1);}if(event.key==="ArrowRight"||event.key==="ArrowUp"){event.preventDefault();showPoint(current+1);}if(event.key==="Home"){event.preventDefault();showPoint(0);}if(event.key==="End"){event.preventDefault();showPoint(chartPoints.length-1);}});
