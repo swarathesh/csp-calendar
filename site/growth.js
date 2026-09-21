@@ -3,48 +3,146 @@ const SP_RETURNS=[
 ].map(([year,value])=>({year,return:value/100}));
 const $=id=>document.getElementById(id);
 const currency=value=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(value);
-let startIndex=SP_RETURNS.length-20;
-let sampleMode="consecutive",randomPeriod=[];
-let chartPoints=[],selectedPoint=null;
-const modeStyles=document.createElement("link");modeStyles.rel="stylesheet";modeStyles.href="growth-modes.css";document.head.append(modeStyles);
-const modePicker=document.createElement("fieldset");modePicker.className="sample-mode";modePicker.innerHTML='<legend>How should years be chosen?</legend><div class="mode-switch"><button type="button" data-sample-mode="consecutive" aria-pressed="true">Consecutive period</button><button type="button" data-sample-mode="random" aria-pressed="false">Random years</button></div><p class="mode-explanation" id="mode-explanation">Keeps the market’s real chronological order.</p>';
-document.querySelector(".growth-controls h2").after(modePicker);
-function pathFor(points,width=900,height=330){
- const values=points.map(p=>p.balance),max=Math.max(...values,1),pad=12;
- return points.map((p,i)=>{const x=pad+i/(points.length-1||1)*(width-pad*2);const y=height-pad-(p.balance/max)*(height-pad*2);return `${i?"L":"M"}${x.toFixed(1)} ${y.toFixed(1)}`;}).join(" ");
+const percent=value=>`${(value*100).toFixed(1)}%`;
+const chart=$("growth-chart-svg");
+let startIndex=SP_RETURNS.length-20,sampleMode="consecutive",randomPeriod=[];
+let chartPoints=[],selectedPoint=null,activePointer=null,summaryKey="";
+
+function pointLabel(index){
+ if(index===0)return "Starting balance";
+ const year=chartPoints[index].year;
+ return sampleMode==="random"?`Year ${index} · using ${year}`:`End of ${year}`;
 }
-function chartPosition(index){
- const width=900,height=330,pad=12,values=chartPoints.map(point=>point.balance),max=Math.max(...values,1);
- return {x:pad+index/(chartPoints.length-1||1)*(width-pad*2),y:height-pad-(chartPoints[index].balance/max)*(height-pad*2)};
+function setHeadline(index,exploring){
+ const point=chartPoints[index],gain=point.balance-point.totalContributed;
+ $("balance-label").textContent=exploring?pointLabel(index):"Ending value";
+ $("ending-value").textContent=currency(point.balance);
+ $("value-context").textContent=`${gain<0?"−":"+"}${currency(Math.abs(gain))} market growth · ${currency(point.totalContributed)} added`;
+ $("value-context").classList.toggle("negative",gain<0);
+ chart.setAttribute("aria-valuenow",index);
+ chart.setAttribute("aria-valuetext",`${pointLabel(index)}: ${currency(point.balance)}; ${currency(point.totalContributed)} added`);
+}
+function hideMarker(){
+ ["chart-guide","chart-dot","chart-tooltip"].forEach(id=>$(id).setAttribute("hidden",""));
+}
+function clearSelection(){
+ selectedPoint=null;hideMarker();
+ if(chartPoints.length)setHeadline(chartPoints.length-1,false);
+}
+function placeTooltip(position){
+ const box=chart.getBoundingClientRect(),tip=$("chart-tooltip");
+ const width=tip.offsetWidth,height=tip.offsetHeight;
+ const x=position.x/900*box.width,y=position.y/330*box.height;
+ tip.style.left=`${Math.max(4,Math.min(box.width-width-4,x-width/2))}px`;
+ tip.style.top=`${Math.max(4,Math.min(box.height-height-4,y-height-18))}px`;
 }
 function showPoint(index){
  if(!chartPoints.length)return;
  selectedPoint=Math.max(0,Math.min(chartPoints.length-1,index));
- const point=chartPoints[selectedPoint],position=chartPosition(selectedPoint);
- $("chart-guide").setAttribute("x1",position.x);$("chart-guide").setAttribute("x2",position.x);$("chart-guide").setAttribute("y1",12);$("chart-guide").setAttribute("y2",318);$("chart-guide").hidden=false;
- $("chart-dot").setAttribute("cx",position.x);$("chart-dot").setAttribute("cy",position.y);$("chart-dot").hidden=false;
- const label=point.year?`${point.year}`:"Start";
- $("chart-readout").innerHTML=`<strong>${label}: ${currency(point.balance)}</strong><span>You have added ${currency(point.totalContributed)} so far.</span>`;
+ const point=chartPoints[selectedPoint],position=GrowthTools.chartPoint(chartPoints,selectedPoint);
+ $("chart-guide").setAttribute("x1",position.x);$("chart-guide").setAttribute("x2",position.x);
+ $("chart-dot").setAttribute("cx",position.x);$("chart-dot").setAttribute("cy",position.y);
+ ["chart-guide","chart-dot","chart-tooltip"].forEach(id=>$(id).removeAttribute("hidden"));
+ $("tooltip-time").textContent=pointLabel(selectedPoint);
+ $("tooltip-balance").textContent=currency(point.balance);
+ $("tooltip-contributed").textContent=`Money added: ${currency(point.totalContributed)}`;
+ setHeadline(selectedPoint,true);placeTooltip(position);
 }
 function pointFromPointer(event){
- const box=$("growth-chart-svg").getBoundingClientRect();
- const ratio=Math.max(0,Math.min(1,(event.clientX-box.left)/box.width));
- showPoint(Math.round(ratio*(chartPoints.length-1)));
+ const box=chart.getBoundingClientRect();
+ if(box.width)showPoint(GrowthTools.pointIndex((event.clientX-box.left)/box.width,chartPoints.length));
+}
+function pathFor(key){
+ const scale=GrowthTools.chartScale(chartPoints);
+ return chartPoints.map((point,index)=>`${index?"L":"M"}${(12+index/(chartPoints.length-1)*876).toFixed(2)} ${(318-point[key]/scale*306).toFixed(2)}`).join(" ");
+}
+function renderSummary(years,initial,monthly){
+ const key=[years,initial,monthly,sampleMode].join("|");
+ if(key===summaryKey)return;
+ const summary=GrowthTools.outcomeSummary(SP_RETURNS,years,initial,monthly,sampleMode);
+ summaryKey=key;
+ $("outcomes-context").textContent=`After ${years} ${years===1?"year":"years"}, starting with ${currency(initial)} and adding ${currency(monthly)} a month. ${summary.count.toLocaleString()} ${sampleMode==="random"?"mixed-year examples":"real historical periods"}.`;
+ $("outcomes-median").textContent=currency(summary.median);
+ $("outcome-rows").innerHTML=summary.bands.map(band=>`<tr${band.label==="Middle outcomes"?' class="middle-outcome"':""}><th scope="row">${band.label}</th><td>${band.min===band.max?currency(band.min):`${currency(band.min)} – ${currency(band.max)}`}</td><td><div class="frequency"><strong>${percent(band.probability)}</strong><span>${band.count.toLocaleString()} of ${summary.count.toLocaleString()}</span><i style="--share:${band.probability*100}%" aria-hidden="true"></i></div></td></tr>`).join("");
+ $("outcomes-footnote").textContent=`Total money added: ${currency(summary.totalContributed)}. ${percent(summary.lossCount/summary.count)} of examples ended below that amount. Ranges are rounded; future results can be outside them.`;
+}
+function showInputError(message){
+ $("input-error").textContent=message;$("input-error").hidden=false;
+ summaryKey="";chartPoints=[];selectedPoint=null;hideMarker();
+ ["ending-value","contributed","market-gain","outcomes-median","chart-max"].forEach(id=>$(id).textContent="—");
+ ["growth-line","contribution-line"].forEach(id=>$(id).setAttribute("d",""));
+ ["outcome-rows","return-rows"].forEach(id=>$(id).innerHTML="");
+ $("outcomes-context").textContent="Enter valid amounts to see the ranges.";
+ $("outcomes-footnote").textContent="";$("value-context").textContent="Check the amounts on the left.";
+ chart.setAttribute("aria-disabled","true");
 }
 function render(){
- const years=Number($("years").value);startIndex=Math.min(startIndex,SP_RETURNS.length-years);
- const period=sampleMode==="random"?randomPeriod:SP_RETURNS.slice(startIndex,startIndex+years);const result=GrowthTools.simulate(period,$("capital").value,$("monthly").value);chartPoints=result.points;const first=period[0],last=period.at(-1);
- $("years-value").textContent=`${years} ${years===1?"year":"years"}`;$("period").textContent=sampleMode==="random"?`${years} random ${years===1?"year":"years"}`:`${first.year}–${last.year}`;$("ending-value").textContent=currency(result.balance);$("contributed").textContent=currency(result.totalContributed);$("market-gain").textContent=currency(result.gain);
- const annualized=result.totalContributed?Math.pow(result.balance/result.totalContributed,1/period.length)-1:null;$("growth-rate").textContent=annualized==null?"—":`${(annualized*100).toFixed(1)}%`;
- $("growth-line").setAttribute("d",pathFor(result.points));$("area-line").setAttribute("d",`${pathFor(result.points)} L888 318 L12 318 Z`);$("chart-start").textContent=sampleMode==="random"?"Draw 1":first.year;$("chart-end").textContent=sampleMode==="random"?`Draw ${years}`:last.year;$("chart-max").textContent=currency(Math.max(...result.points.map(p=>p.balance)));
- $("return-rows").innerHTML=period.map((r,i)=>`<tr><td>${sampleMode==="random"?`<span class="sequence-index">${i+1}</span>`:""}${r.year}</td><td class="${r.return<0?'negative':'positive'}">${r.return<0?'':'+'}${(r.return*100).toFixed(2)}%</td><td>${currency(result.points[i+1].balance)}</td></tr>`).join("");
- if(selectedPoint!==null)showPoint(Math.min(selectedPoint,chartPoints.length-1));
+ const years=Number($("years").value);
+ try{
+  const initial=GrowthTools.validAmount($("capital").value),monthly=GrowthTools.validAmount($("monthly").value);
+  startIndex=Math.min(startIndex,SP_RETURNS.length-years);
+  if(sampleMode==="random"&&randomPeriod.length!==years)randomPeriod=GrowthTools.sampleYears(SP_RETURNS,years);
+  const period=sampleMode==="random"?randomPeriod:SP_RETURNS.slice(startIndex,startIndex+years);
+  const result=GrowthTools.simulate(period,initial,monthly);
+  if(!Number.isFinite(result.balance))throw new RangeError("These amounts are too large to calculate.");
+  renderSummary(years,initial,monthly);
+  $("input-error").hidden=true;chart.removeAttribute("aria-disabled");
+  chartPoints=result.points;
+  $("years-value").textContent=`${years} ${years===1?"year":"years"}`;
+  document.querySelectorAll("[data-years]").forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.years)===years)));
+  $("period").textContent=sampleMode==="random"?`${years} mixed years`:`${period[0].year}–${period.at(-1).year}`;
+  $("contributed").textContent=currency(result.totalContributed);$("market-gain").textContent=currency(result.gain);
+  $("growth-line").setAttribute("d",pathFor("balance"));$("contribution-line").setAttribute("d",pathFor("totalContributed"));
+  $("chart-start").textContent=sampleMode==="random"?"Start":`Start of ${period[0].year}`;
+  $("chart-end").textContent=sampleMode==="random"?`Year ${years}`:`End of ${period.at(-1).year}`;
+  $("chart-max").textContent=currency(GrowthTools.chartScale(chartPoints));
+  chart.setAttribute("aria-valuemax",years);
+  $("return-rows").innerHTML=period.map((r,i)=>`<tr><td>${sampleMode==="random"?`Draw ${i+1} · `:""}${r.year}</td><td class="${r.return<0?"negative":"positive"}">${r.return<0?"":"+"}${(r.return*100).toFixed(2)}%</td><td>${currency(result.points[i+1].balance)}</td></tr>`).join("");
+  clearSelection();
+ }catch(error){showInputError(error.message);}
 }
-function randomize(){if(sampleMode==="random")randomPeriod=GrowthTools.sampleYears(SP_RETURNS,$("years").value);else startIndex=GrowthTools.randomStart(SP_RETURNS,$("years").value);render();}
-modePicker.addEventListener("click",event=>{const button=event.target.closest("[data-sample-mode]");if(!button)return;sampleMode=button.dataset.sampleMode;modePicker.querySelectorAll("button").forEach(item=>item.setAttribute("aria-pressed",String(item===button)));$("mode-explanation").textContent=sampleMode==="random"?"Draws unique years and applies them in random order. This is a scenario, not a real market period.":"Keeps the market’s real chronological order.";$("random-period").textContent=sampleMode==="random"?"Draw new random years":"Draw another historical period";document.querySelector(".control-note").textContent=sampleMode==="random"?"Every draw uses unique years from 1928–2025. Their drawn order becomes the simulated sequence.":"Each draw selects a contiguous period that fits the chosen length. It does not rearrange good and bad years.";randomize();});
-$("years").addEventListener("input",()=>{if(sampleMode==="random")randomPeriod=GrowthTools.sampleYears(SP_RETURNS,$("years").value);render();});$("capital").addEventListener("input",render);$("monthly").addEventListener("input",render);$("random-period").addEventListener("click",randomize);render();
-const chart=$("growth-chart-svg");
-chart.addEventListener("pointerdown",event=>{chart.setPointerCapture(event.pointerId);pointFromPointer(event);});
-chart.addEventListener("pointermove",event=>{if(chart.hasPointerCapture(event.pointerId))pointFromPointer(event);});
-chart.addEventListener("pointerup",event=>{if(chart.hasPointerCapture(event.pointerId))chart.releasePointerCapture(event.pointerId);});
-chart.addEventListener("keydown",event=>{if(!chartPoints.length)return;const current=selectedPoint??0;if(event.key==="ArrowLeft"||event.key==="ArrowDown"){event.preventDefault();showPoint(current-1);}if(event.key==="ArrowRight"||event.key==="ArrowUp"){event.preventDefault();showPoint(current+1);}if(event.key==="Home"){event.preventDefault();showPoint(0);}if(event.key==="End"){event.preventDefault();showPoint(chartPoints.length-1);}});
+function randomize(){
+ const years=Number($("years").value);
+ if(sampleMode==="random")randomPeriod=GrowthTools.sampleYears(SP_RETURNS,years);
+ else startIndex=GrowthTools.randomStart(SP_RETURNS,years);
+ render();
+}
+document.querySelector(".sample-mode").addEventListener("click",event=>{
+ const button=event.target.closest("[data-sample-mode]");if(!button)return;
+ sampleMode=button.dataset.sampleMode;
+ document.querySelectorAll("[data-sample-mode]").forEach(item=>item.setAttribute("aria-pressed",String(item===button)));
+ $("mode-explanation").textContent=sampleMode==="random"?"Mixes unique past years in a new order. This is an invented sequence.":"Keeps the market’s actual order of good and bad years.";
+ document.querySelector(".example-badge").textContent=sampleMode==="random"?"One mixed-year example":"One historical example";
+ randomize();
+});
+document.querySelector(".horizon-bar").addEventListener("click",event=>{
+ const button=event.target.closest("[data-years]");if(!button)return;
+ $("years").value=button.dataset.years;render();
+});
+["years","capital","monthly"].forEach(id=>$(id).addEventListener("input",render));
+$("random-period").addEventListener("click",randomize);
+$("show-contributions").addEventListener("change",()=>$("contribution-line").toggleAttribute("hidden",!$("show-contributions").checked));
+chart.addEventListener("pointerdown",event=>{
+ if(!event.isPrimary||event.button!==0)return;
+ activePointer=event.pointerId;chart.setPointerCapture(event.pointerId);pointFromPointer(event);
+});
+chart.addEventListener("pointermove",event=>{if(event.pointerType==="mouse"||event.pointerId===activePointer)pointFromPointer(event);});
+chart.addEventListener("pointerup",event=>{
+ if(event.pointerId!==activePointer)return;
+ pointFromPointer(event);activePointer=null;
+ if(chart.hasPointerCapture(event.pointerId))chart.releasePointerCapture(event.pointerId);
+ if(event.pointerType==="mouse"&&!chart.matches(":hover"))clearSelection();
+});
+chart.addEventListener("pointercancel",()=>{activePointer=null;clearSelection();});
+chart.addEventListener("lostpointercapture",()=>{activePointer=null;});
+chart.addEventListener("pointerleave",event=>{if(activePointer===null&&event.pointerType==="mouse")clearSelection();});
+chart.addEventListener("keydown",event=>{
+ if(!chartPoints.length)return;
+ const current=selectedPoint??chartPoints.length-1;
+ const targets={ArrowLeft:current-1,ArrowDown:current-1,ArrowRight:current+1,ArrowUp:current+1,Home:0,End:chartPoints.length-1};
+ if(event.key in targets){event.preventDefault();showPoint(targets[event.key]);}
+ if(event.key==="Escape"){event.preventDefault();clearSelection();}
+});
+chart.addEventListener("blur",clearSelection);
+new ResizeObserver(()=>{if(selectedPoint!==null)placeTooltip(GrowthTools.chartPoint(chartPoints,selectedPoint));}).observe(chart);
+render();
