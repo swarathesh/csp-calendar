@@ -7,7 +7,9 @@
   const stopAfter=options.stopAfter??40,withdrawFrom=options.withdrawFrom??1,withdrawal=validAmount(options.withdrawal??0);
   if(!Number.isInteger(stopAfter)||stopAfter<0||stopAfter>40)throw new RangeError("Stop contributions after a whole number of years, from 0 to 40.");
   if(!Number.isInteger(withdrawFrom)||withdrawFrom<1||withdrawFrom>40)throw new RangeError("Start withdrawals in a whole year, from 1 to 40.");
-  return {stopAfter,withdrawFrom,withdrawal};
+  const inflation=validAmount(options.inflation??0);
+  if(inflation>1)throw new RangeError("Use an annual inflation rate between 0% and 100%.");
+  return {stopAfter,withdrawFrom,withdrawal,inflation};
  }
  function simulate(returns,initial,monthly,options={}){
   const plan=cashflowPlan(options);
@@ -15,19 +17,23 @@
   let balance=validAmount(initial),totalContributed=balance,totalWithdrawn=0,shortfall=0,firstShortfall=null;
   const points=[{year:null,balance,totalContributed,totalWithdrawn,shortfall}];
   for(const [index,item] of returns.entries()){
+   const opening=balance,addedBefore=totalContributed,withdrawnBefore=totalWithdrawn,shortfallBefore=shortfall;
+   const monthlyWithdrawal=index+1>=plan.withdrawFrom?plan.withdrawal*Math.pow(1+plan.inflation,index):0;
    const monthlyRate=Math.pow(1+item.return,1/12)-1;
    for(let month=0;month<12;month++){
     const deposit=index<plan.stopAfter?monthly:0;
     balance=(balance+deposit)*(1+monthlyRate);
     totalContributed+=deposit;
-    const requested=index+1>=plan.withdrawFrom?plan.withdrawal:0;
+    const requested=monthlyWithdrawal;
     const paid=Math.min(balance,requested);
     balance-=paid;totalWithdrawn+=paid;
     const missing=requested-paid;
     shortfall+=missing;
     if(missing>1e-7&&firstShortfall===null)firstShortfall={year:index+1,month:month+1};
    }
-   points.push({year:item.year,balance,totalContributed,totalWithdrawn,shortfall,return:item.return});
+   points.push({year:item.year,balance,totalContributed,totalWithdrawn,shortfall,return:item.return,
+    opening,added:totalContributed-addedBefore,withdrawn:totalWithdrawn-withdrawnBefore,
+    unpaid:shortfall-shortfallBefore,monthlyWithdrawal,realBalance:balance/Math.pow(1+plan.inflation,index+1)});
   }
   return {balance,totalContributed,totalWithdrawn,shortfall,firstShortfall,gain:balance+totalWithdrawn-totalContributed,points};
  }

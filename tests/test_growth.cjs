@@ -2,6 +2,20 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {simulate,randomStart,sampleYears}=require('../site/growth-tools.js');
 const {outcomeSummary,chartScale,chartPoint,pointIndex}=require('../site/growth-tools.js');
+test('inflation raises withdrawals from the plan start and reports annual cash flows and buying power',()=>{
+ const data=Array.from({length:3},(_,year)=>({year,return:0}));
+ const plan={stopAfter:0,withdrawFrom:2,withdrawal:100,inflation:.1};
+ const result=simulate(data,10000,0,plan);
+ assert.equal(result.points[1].withdrawn,0);
+ assert.ok(Math.abs(result.points[2].monthlyWithdrawal-110)<1e-8);
+ assert.ok(Math.abs(result.points[3].withdrawn-1452)<1e-8);
+ assert.ok(Math.abs(result.totalWithdrawn-2772)<1e-8);
+ assert.ok(Math.abs(result.balance-7228)<1e-8);
+ assert.ok(Math.abs(result.points[3].realBalance-7228/1.331)<1e-8);
+ assert.ok(Math.abs(result.gain)<1e-8);
+ assert.equal(outcomeSummary(data,3,10000,0,'consecutive',5000,plan).median,result.balance);
+ for(const inflation of [-.01,NaN,Infinity,1.01])assert.throws(()=>simulate(data,100,0,{inflation}),RangeError);
+});
 test('contributions stop after the selected year and withdrawals start in the selected year',()=>{
  const data=Array.from({length:3},(_,year)=>({year,return:0}));
  const result=simulate(data,1000,100,{stopAfter:1,withdrawFrom:2,withdrawal:50});
