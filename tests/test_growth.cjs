@@ -2,6 +2,35 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {simulate,randomStart,sampleYears}=require('../site/growth-tools.js');
 const {outcomeSummary,chartScale,chartPoint,pointIndex}=require('../site/growth-tools.js');
+test('contributions stop after the selected year and withdrawals start in the selected year',()=>{
+ const data=Array.from({length:3},(_,year)=>({year,return:0}));
+ const result=simulate(data,1000,100,{stopAfter:1,withdrawFrom:2,withdrawal:50});
+ assert.equal(result.totalContributed,2200);assert.equal(result.totalWithdrawn,1200);
+ assert.equal(result.balance,1000);assert.equal(result.gain,0);assert.equal(result.firstShortfall,null);
+ assert.equal(result.points[1].totalWithdrawn,0);assert.equal(result.points[2].totalWithdrawn,600);
+});
+test('withdrawals stop at zero and report first unpaid month, without counting withdrawals as losses',()=>{
+ const result=simulate([{year:1,return:0}],250,100,{stopAfter:0,withdrawFrom:1,withdrawal:100});
+ assert.equal(result.balance,0);assert.equal(result.totalWithdrawn,250);assert.equal(result.shortfall,950);
+ assert.deepEqual(result.firstShortfall,{year:1,month:3});assert.equal(result.gain,0);
+ const summary=outcomeSummary([{year:1,return:0}],1,250,100,'consecutive',5000,{stopAfter:0,withdrawFrom:1,withdrawal:100});
+ assert.equal(summary.shortfallCount,1);assert.equal(summary.lossCount,0);assert.equal(summary.totalContributed,250);
+});
+test('exactly funded withdrawals, overlapping deposits, and future withdrawals',()=>{
+ const data=[{year:1,return:0}];
+ assert.equal(simulate(data,1200,0,{withdrawal:100}).firstShortfall,null);
+ const overlap=simulate(data,0,100,{withdrawal:100});
+ assert.equal(overlap.balance,0);assert.equal(overlap.totalWithdrawn,1200);assert.equal(overlap.firstShortfall,null);
+ assert.equal(simulate(data,1000,100,{withdrawFrom:2,withdrawal:100}).totalWithdrawn,0);
+ for(const plan of [{stopAfter:-1},{stopAfter:1.5},{withdrawFrom:0},{withdrawFrom:NaN},{withdrawal:-1}])assert.throws(()=>simulate(data,1000,100,plan),RangeError);
+});
+test('month-end withdrawal follows monthly growth and outcomes use the same plan',()=>{
+ const data=[{year:1,return:Math.pow(1.01,12)-1}];
+ const result=simulate(data,1000,0,{withdrawal:10});
+ assert.ok(Math.abs(result.balance-1000)<1e-8);assert.equal(result.totalWithdrawn,120);
+ const summary=outcomeSummary(data,1,1000,0,'random',20,{withdrawal:10});
+ assert.ok(Math.abs(summary.median-result.balance)<1e-8);assert.equal(summary.shortfallCount,0);
+});
 test('simulation compounds annual return through equivalent monthly rates',()=>{const result=simulate([{year:2020,return:.21}],1000,0);assert.ok(Math.abs(result.balance-1210)<1e-8);assert.equal(result.totalContributed,1000);});
 test('monthly contributions are included and tracked separately',()=>{const result=simulate([{year:2020,return:0}],1000,100);assert.equal(result.balance,2200);assert.equal(result.totalContributed,2200);assert.equal(result.gain,0);});
 test('random window always fits the available history',()=>{const data=Array.from({length:98},(_,i)=>i);assert.equal(randomStart(data,20,()=>0),0);assert.equal(randomStart(data,20,()=>.999999),78);assert.equal(randomStart(data,200,()=>.9),0);});

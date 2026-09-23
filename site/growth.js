@@ -11,16 +11,16 @@ let chartPoints=[],selectedPoint=null,activePointer=null,summaryKey="";
 function pointLabel(index){
  if(index===0)return "Starting balance";
  const year=chartPoints[index].year;
- return sampleMode==="random"?`Year ${index} · using ${year}`:`End of ${year}`;
+ return `Year ${index} · ${sampleMode==="random"?"using":"end of"} ${year}`;
 }
 function setHeadline(index,exploring){
- const point=chartPoints[index],gain=point.balance-point.totalContributed;
+ const point=chartPoints[index],gain=point.balance+point.totalWithdrawn-point.totalContributed;
  $("balance-label").textContent=exploring?pointLabel(index):"Ending value";
  $("ending-value").textContent=currency(point.balance);
- $("value-context").textContent=`${gain<0?"−":"+"}${currency(Math.abs(gain))} market growth · ${currency(point.totalContributed)} added`;
+ $("value-context").textContent=`${gain<0?"−":"+"}${currency(Math.abs(gain))} market growth · ${currency(point.totalContributed)} added · ${currency(point.totalWithdrawn)} taken out`;
  $("value-context").classList.toggle("negative",gain<0);
  chart.setAttribute("aria-valuenow",index);
- chart.setAttribute("aria-valuetext",`${pointLabel(index)}: ${currency(point.balance)}; ${currency(point.totalContributed)} added`);
+ chart.setAttribute("aria-valuetext",`${pointLabel(index)}: ${currency(point.balance)}; ${currency(point.totalContributed)} added; ${currency(point.totalWithdrawn)} taken out`);
 }
 function hideMarker(){
  ["chart-guide","chart-dot","chart-tooltip"].forEach(id=>$(id).setAttribute("hidden",""));
@@ -45,7 +45,7 @@ function showPoint(index){
  ["chart-guide","chart-dot","chart-tooltip"].forEach(id=>$(id).removeAttribute("hidden"));
  $("tooltip-time").textContent=pointLabel(selectedPoint);
  $("tooltip-balance").textContent=currency(point.balance);
- $("tooltip-contributed").textContent=`Money added: ${currency(point.totalContributed)}`;
+ $("tooltip-contributed").textContent=`Added: ${currency(point.totalContributed)} · Taken out: ${currency(point.totalWithdrawn)}`;
  setHeadline(selectedPoint,true);placeTooltip(position);
 }
 function pointFromPointer(event){
@@ -56,20 +56,22 @@ function pathFor(key){
  const scale=GrowthTools.chartScale(chartPoints);
  return chartPoints.map((point,index)=>`${index?"L":"M"}${(12+index/(chartPoints.length-1)*876).toFixed(2)} ${(318-point[key]/scale*306).toFixed(2)}`).join(" ");
 }
-function renderSummary(years,initial,monthly){
- const key=[years,initial,monthly,sampleMode].join("|");
+function renderSummary(years,initial,monthly,plan){
+ const key=[years,initial,monthly,sampleMode,plan.stopAfter,plan.withdrawFrom,plan.withdrawal].join("|");
  if(key===summaryKey)return;
- const summary=GrowthTools.outcomeSummary(SP_RETURNS,years,initial,monthly,sampleMode);
+ const summary=GrowthTools.outcomeSummary(SP_RETURNS,years,initial,monthly,sampleMode,5000,plan);
  summaryKey=key;
- $("outcomes-context").textContent=`After ${years} ${years===1?"year":"years"}, starting with ${currency(initial)} and adding ${currency(monthly)} a month. ${summary.count.toLocaleString()} ${sampleMode==="random"?"mixed-year examples":"real historical periods"}.`;
+ $("outcomes-context").textContent=`Money left after ${years} ${years===1?"year":"years"}, starting with ${currency(initial)}, using your contribution and withdrawal plan. ${summary.count.toLocaleString()} ${sampleMode==="random"?"mixed-year examples":"real historical periods"}.`;
  $("outcomes-median").textContent=currency(summary.median);
  $("outcome-rows").innerHTML=summary.bands.map(band=>`<tr${band.label==="Middle outcomes"?' class="middle-outcome"':""}><th scope="row">${band.label}</th><td>${band.min===band.max?currency(band.min):`${currency(band.min)} – ${currency(band.max)}`}</td><td><div class="frequency"><strong>${percent(band.probability)}</strong><span>${band.count.toLocaleString()} of ${summary.count.toLocaleString()}</span><i style="--share:${band.probability*100}%" aria-hidden="true"></i></div></td></tr>`).join("");
- $("outcomes-footnote").textContent=`Total money added: ${currency(summary.totalContributed)}. ${percent(summary.lossCount/summary.count)} of examples ended below that amount. Ranges are rounded; future results can be outside them.`;
+ $("outcomes-footnote").textContent=`Total money added: ${currency(summary.totalContributed)}. ${percent(summary.lossCount/summary.count)} of examples returned less than you put in, counting both money left and money taken out. Ranges are rounded; future results can be outside them.`;
+ $("withdrawal-outcomes").textContent=plan.withdrawal>0&&plan.withdrawFrom<=years?`${percent((summary.count-summary.shortfallCount)/summary.count)} of examples paid every planned withdrawal. ${summary.shortfallCount} of ${summary.count} examples could not pay the full amount at least once. These are historical examples, not guaranteed future odds.`:"No withdrawals during this plan. Set a monthly amount and a start year within the simulation to compare them.";
 }
 function showInputError(message){
  $("input-error").textContent=message;$("input-error").hidden=false;
  summaryKey="";chartPoints=[];selectedPoint=null;hideMarker();
- ["ending-value","contributed","market-gain","outcomes-median","chart-max"].forEach(id=>$(id).textContent="—");
+ ["ending-value","contributed","market-gain","withdrawn","outcomes-median","chart-max"].forEach(id=>$(id).textContent="—");
+ ["plan-summary","withdrawal-status","withdrawal-outcomes"].forEach(id=>$(id).textContent="");
  ["growth-line","contribution-line"].forEach(id=>$(id).setAttribute("d",""));
  ["outcome-rows","return-rows"].forEach(id=>$(id).innerHTML="");
  $("outcomes-context").textContent="Enter valid amounts to see the ranges.";
@@ -80,24 +82,29 @@ function render(){
  const years=Number($("years").value);
  try{
   const initial=GrowthTools.validAmount($("capital").value),monthly=GrowthTools.validAmount($("monthly").value);
+  const plan={stopAfter:$("stop-after").valueAsNumber,withdrawFrom:$("withdraw-from").valueAsNumber,withdrawal:GrowthTools.validAmount($("withdrawal").value)};
   startIndex=Math.min(startIndex,SP_RETURNS.length-years);
   if(sampleMode==="random"&&randomPeriod.length!==years)randomPeriod=GrowthTools.sampleYears(SP_RETURNS,years);
   const period=sampleMode==="random"?randomPeriod:SP_RETURNS.slice(startIndex,startIndex+years);
-  const result=GrowthTools.simulate(period,initial,monthly);
+  const result=GrowthTools.simulate(period,initial,monthly,plan);
   if(!Number.isFinite(result.balance))throw new RangeError("These amounts are too large to calculate.");
-  renderSummary(years,initial,monthly);
+  renderSummary(years,initial,monthly,plan);
   $("input-error").hidden=true;chart.removeAttribute("aria-disabled");
   chartPoints=result.points;
   $("years-value").textContent=`${years} ${years===1?"year":"years"}`;
   document.querySelectorAll("[data-years]").forEach(b=>b.setAttribute("aria-pressed",String(Number(b.dataset.years)===years)));
   $("period").textContent=sampleMode==="random"?`${years} mixed years`:`${period[0].year}–${period.at(-1).year}`;
   $("contributed").textContent=currency(result.totalContributed);$("market-gain").textContent=currency(result.gain);
+  $("withdrawn").textContent=currency(result.totalWithdrawn);
+  $("plan-summary").textContent=`Add ${currency(monthly)} a month for ${Math.min(years,plan.stopAfter)} years. ${plan.withdrawal>0?`Take out ${currency(plan.withdrawal)} a month from year ${plan.withdrawFrom}${plan.withdrawFrom>years?" (beyond this simulation)":""}.`:"No monthly withdrawals."}`;
+  $("withdrawal-status").textContent=result.firstShortfall?`This example first could not pay the full withdrawal in year ${result.firstShortfall.year}, month ${result.firstShortfall.month}. Total unpaid: ${currency(result.shortfall)}.`:plan.withdrawal>0&&plan.withdrawFrom<=years?"This example paid every planned withdrawal.":"";
+  $("withdrawal-status").classList.toggle("negative",Boolean(result.firstShortfall));
   $("growth-line").setAttribute("d",pathFor("balance"));$("contribution-line").setAttribute("d",pathFor("totalContributed"));
   $("chart-start").textContent=sampleMode==="random"?"Start":`Start of ${period[0].year}`;
   $("chart-end").textContent=sampleMode==="random"?`Year ${years}`:`End of ${period.at(-1).year}`;
   $("chart-max").textContent=currency(GrowthTools.chartScale(chartPoints));
   chart.setAttribute("aria-valuemax",years);
-  $("return-rows").innerHTML=period.map((r,i)=>`<tr><td>${sampleMode==="random"?`Draw ${i+1} · `:""}${r.year}</td><td class="${r.return<0?"negative":"positive"}">${r.return<0?"":"+"}${(r.return*100).toFixed(2)}%</td><td>${currency(result.points[i+1].balance)}</td></tr>`).join("");
+  $("return-rows").innerHTML=period.map((r,i)=>`<tr><td>Year ${i+1} · ${r.year}</td><td class="${r.return<0?"negative":"positive"}">${r.return<0?"":"+"}${(r.return*100).toFixed(2)}%</td><td>${currency(result.points[i+1].balance)}</td><td>${currency(result.points[i+1].totalWithdrawn)}</td></tr>`).join("");
   clearSelection();
  }catch(error){showInputError(error.message);}
 }
@@ -119,7 +126,7 @@ document.querySelector(".horizon-bar").addEventListener("click",event=>{
  const button=event.target.closest("[data-years]");if(!button)return;
  $("years").value=button.dataset.years;render();
 });
-["years","capital","monthly"].forEach(id=>$(id).addEventListener("input",render));
+["years","capital","monthly","stop-after","withdrawal","withdraw-from"].forEach(id=>$(id).addEventListener("input",render));
 $("random-period").addEventListener("click",randomize);
 $("show-contributions").addEventListener("change",()=>$("contribution-line").toggleAttribute("hidden",!$("show-contributions").checked));
 chart.addEventListener("pointerdown",event=>{
